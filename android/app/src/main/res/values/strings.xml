@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">ChatRT</string>
+    
+    <!-- Connection Status -->
+    <string name="status_disconnected">Disconnected</string>
+    <string name="status_connecting">Connecting…</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_failed">Connection Failed</string>
+    <string name="status_reconnecting">Reconnecting…</string>
+    
+    <!-- Video Modes -->
+    <string name="mode_audio_only">Audio Only</string>
+    <string name="mode_webcam">Webcam</string>
+    <string name="mode_screen_share">Screen Share</string>
+    
+    <!-- Buttons -->
+    <string name="button_start_chat">Start Chat</string>
+    <string name="button_end_chat">End Chat</string>
+    <string name="button_switch_camera">Switch Camera</string>
+    <string name="button_settings">Settings</string>
+    
+    <!-- Permissions -->
+    <string name="permission_microphone_title">Microphone Permission</string>
+    <string name="permission_microphone_message">ChatRT needs microphone access to enable voice conversations with the AI.</string>
+    <string name="permission_camera_title">Camera Permission</string>
+    <string name="permission_camera_message">ChatRT needs camera access to enable video conversations with the AI.</string>
+    <string name="permission_screen_capture_title">Screen Recording Permission</string>
+    <string name="permission_screen_capture_message">ChatRT needs screen recording permission to share your screen with the AI.</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_default_video_mode">Default Video Mode</string>
+    <string name="settings_audio_quality">Audio Quality</string>
+    <string name="settings_debug_logging">Debug Logging</string>
+    <string name="settings_server_url">Server URL</string>
+    
+    <!-- Errors -->
+    <string name="error_network">Network connection error. Please check your internet connection.</string>
+    <string name="error_permission_denied">Permission denied. Please grant the required permissions in Settings.</string>
+    <string name="error_webrtc">WebRTC connection error. Please try again.</string>
+    <string name="error_camera">Camera error. Please check if the camera is available.</string>
+    <string name="error_microphone">Microphone error. Please check if the microphone is available.</string>
+    
+    <!-- Notifications -->
+    <string name="notification_screen_recording_title">Screen Recording Active</string>
+    <string name="notification_screen_recording_message">ChatRT is sharing your screen</string>
+    <string name="notification_call_active_title">ChatRT Call Active</string>
+    <string name="notification_call_active_message">Voice conversation in progress</string>
+</resources>
