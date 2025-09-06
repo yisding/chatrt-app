@@ -10,7 +10,7 @@ rtc.post("/", async (c) => {
   const headers = makeHeaders();
   const fd = new FormData();
   fd.set("sdp", await c.req.text());
-  fd.set("session", JSON.stringify(makeSession(video)));
+  fd.set("session", JSON.stringify(makeSession()));
   const opts = { method: "POST", headers, body: fd };
   const resp = await fetch(url, opts);
   if (!resp.ok) {
