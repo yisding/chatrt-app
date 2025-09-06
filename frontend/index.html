@@ -582,7 +582,7 @@
         // Server will provide the session configuration.
         try {
           const resp = await fetch(
-            videoMode !== "none" ? "/rtc?video=true" : "/rtc",
+            "/rtc",
             {
               method: "POST",
               headers: { "Content-Type": "application/sdp" },

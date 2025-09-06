@@ -15,7 +15,7 @@ export function makeHeaders(contentType?: string) {
   return obj;
 }
 
-export function makeSession(video: boolean) {
+export function makeSession() {
   const session = {
     type: "realtime",
     model: MODEL,

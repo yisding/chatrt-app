@@ -5,10 +5,6 @@ const rtc = new Hono();
 
 // POST /rtc : create a new call
 rtc.post("/", async (c) => {
-  // Parse video flag from query (?video=true)
-  const reqUrl = new URL(c.req.url);
-  const video = reqUrl.searchParams.get("video") === "true";
-
   // Create the call.
   const url = "https://api.openai.com/v1/realtime/calls";
   const headers = makeHeaders();
