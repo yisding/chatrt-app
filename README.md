@@ -1,6 +1,6 @@
-# hello-realtime-video
+# ChatRT
 
-Hello Realtime is a complete OpenAI Realtime application that supports WebRTC
+ChatRT is a complete OpenAI Realtime application that supports WebRTC
 users. You can access the app via WebRTC at
 https://hello-realtime-video.val.run.
 
