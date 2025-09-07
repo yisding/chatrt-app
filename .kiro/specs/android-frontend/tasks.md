@@ -47,12 +47,22 @@
 
 - [ ] 6. Create platform abstraction layer (expect/actual)
 
-  - Define PlatformManager interface with expect declarations
-  - Create WebRtcManager, AudioManager, VideoManager interfaces
-  - Define PermissionManager and ScreenCaptureManager interfaces
-  - Add platform-specific system integration interfaces
-  - Implement actual declarations for Android platform
+  - Define PlatformManager interface with expect declarations in shared module
+  - Create WebRtcManager, AudioManager, VideoManager interfaces with expect declarations
+  - Define PermissionManager and ScreenCaptureManager interfaces with expect declarations
+  - Add platform-specific system integration interfaces (NetworkMonitor, BatteryMonitor, LifecycleManager)
+  - Implement actual declarations for Android platform in androidMain
+  - Implement actual declarations for JVM platform in jvmMain
   - _Requirements: 1.2, 1.3, 1.5, 2.2, 2.3, 3.1, 3.2_
+
+- [ ] 6.1 Complete ChatRepository implementation with WebRTC integration
+
+  - Update ChatRepositoryImpl to integrate with WebRtcManager for actual SDP offer creation
+  - Implement connection monitoring using WebSocket observer pattern
+  - Add proper error handling and retry logic for network operations
+  - Implement connection state management and real-time updates
+  - Write integration tests for repository with mock WebRTC manager
+  - _Requirements: 1.3, 1.4, 4.5, 6.5_
 
 - [ ] 7. Implement Android WebRTC manager
 
@@ -101,45 +111,57 @@
 
 - [ ] 12. Set up dependency injection with Koin
 
-  - Create Koin modules for shared and Android-specific dependencies
-  - Configure dependency injection for managers and repositories
-  - Implement Application class with Koin initialization
-  - Write tests for dependency injection setup
+  - Create shared Koin module for repositories and ViewModels in commonMain
+  - Create Android-specific Koin module for platform managers in androidMain
+  - Create JVM-specific Koin module for platform managers in jvmMain
+  - Implement Android Application class with Koin initialization
+  - Implement JVM main function with Koin initialization
+  - Wire up all dependencies and test injection setup
   - _Requirements: 1.1_
 
 - [ ] 13. Build shared UI components with Compose Multiplatform
 
-  - Create ConnectionStatusIndicator with visual feedback for connection states
-  - Implement VideoModeSelector with radio buttons for audio/video/screen modes
-  - Add VideoPreview composable for camera and screen capture display
-  - Create ControlButtons for start/stop, settings, and camera switching
-  - Implement LogsDisplay with scrollable log entries and timestamp formatting
+  - Create ConnectionStatusIndicator composable with Material 3 design and connection state animations
+  - Implement VideoModeSelector with Material 3 radio buttons for audio/video/screen modes
+  - Add VideoPreview composable for camera and screen capture display with proper aspect ratios
+  - Create ControlButtons composable for start/stop, settings, and camera switching with Material 3 styling
+  - Implement LogsDisplay composable with scrollable log entries, timestamp formatting, and log level colors
+  - Add ErrorDisplay composable for showing ChatRtError messages with retry actions
+  - Create OptimizationSuggestion composable for platform optimization recommendations
   - _Requirements: 1.1, 1.6, 2.1, 2.3, 2.5, 3.1, 3.3, 4.1, 4.2, 4.4_
 
 - [ ] 14. Build main screen UI with ChatRT functionality
 
-  - Replace demo App.kt with MainScreen composable
-  - Integrate connection controls and status display
-  - Add video preview and real-time logging display
-  - Handle video stream rendering and aspect ratio management
+  - Replace demo App.kt with MainScreen composable using Material 3 design
+  - Integrate MainViewModel with connection controls and status display
+  - Add video preview area with proper layout for different video modes
+  - Implement real-time logging display with expandable/collapsible logs section
+  - Handle video stream rendering and aspect ratio management for different orientations
+  - Add error handling UI with user-friendly error messages and retry buttons
+  - Add platform optimization suggestion UI with accept/dismiss actions
   - Write UI tests for main screen interactions and state updates
   - _Requirements: 1.1, 1.6, 2.1, 3.1, 4.1_
 
 - [ ] 15. Implement settings screen and configuration UI
 
-  - Create SettingsScreen composable with preference categories
-  - Add video mode, audio quality, and camera preference controls
-  - Implement server URL configuration with validation feedback
-  - Create debug logging toggle and advanced settings section
-  - Write UI tests for settings screen functionality
+  - Create SettingsScreen composable with Material 3 preference categories and sections
+  - Integrate SettingsViewModel with two-way data binding for all settings
+  - Add video mode, audio quality, and camera preference controls with proper validation
+  - Implement server URL configuration with real-time validation feedback and test connection
+  - Create debug logging toggle and advanced settings section with proper grouping
+  - Add reset to defaults functionality with confirmation dialog
+  - Add save success/error feedback with snackbars or toast messages
+  - Write UI tests for settings screen functionality and validation
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
 - [ ] 16. Add app navigation and routing
 
-  - Set up Compose Navigation between main and settings screens
-  - Handle navigation state management and back navigation
-  - Add proper state preservation during navigation
-  - Implement navigation animations and transitions
+  - Add Compose Navigation dependency to shared module
+  - Set up NavHost with routes for main and settings screens
+  - Handle navigation state management and proper back navigation behavior
+  - Add proper state preservation during navigation with ViewModel scoping
+  - Implement Material 3 navigation animations and transitions
+  - Add navigation drawer or bottom navigation for easy screen switching
   - Write tests for navigation flows and state management
   - _Requirements: 6.1_
 
