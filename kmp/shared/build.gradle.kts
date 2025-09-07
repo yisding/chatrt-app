@@ -40,6 +40,9 @@ kotlin {
             
             // Kotlinx datetime for timestamp handling
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+            
+            // ViewModel support for multiplatform
+            implementation(libs.androidx.lifecycle.viewmodelCompose)
         }
         
         androidMain.dependencies {

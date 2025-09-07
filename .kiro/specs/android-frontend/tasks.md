@@ -36,7 +36,7 @@
   - Write integration tests for API communication
   - _Requirements: 1.3, 6.5_
 
-- [ ] 5. Implement shared ViewModels with business logic
+- [x] 5. Implement shared ViewModels with business logic
 
   - Create MainViewModel with connection state, video mode, and logs management
   - Implement SettingsViewModel for app preferences management
