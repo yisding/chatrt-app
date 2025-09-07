@@ -40,7 +40,7 @@ The Android app will maintain feature parity with the web frontend while leverag
 
 #### Acceptance Criteria
 
-1. WHEN the user selects "Screen Share" mode THEN the system SHALL request screen recording permissions through Android's MediaProjection API
+1. WHEN the user selects "Screen Share" mode THEN the system SHALL request screen recording permissions
 2. WHEN screen sharing permissions are granted THEN the system SHALL capture the device screen and stream it via WebRTC
 3. WHEN screen sharing is active THEN the system SHALL display a persistent notification indicating active screen recording
 4. WHEN the user navigates away from the app during screen sharing THEN the system SHALL continue streaming screen content in the background
@@ -57,7 +57,6 @@ The Android app will maintain feature parity with the web frontend while leverag
 2. WHEN the connection is established THEN the system SHALL show a green indicator and "Connected" status
 3. WHEN there are connection issues THEN the system SHALL display appropriate error messages with suggested actions
 4. WHEN the user enables debug mode THEN the system SHALL show real-time logs of WebRTC events and API calls
-5. WHEN network conditions change THEN the system SHALL automatically adjust streaming quality and notify the user if needed
 
 ### Requirement 5
 
@@ -67,19 +66,14 @@ The Android app will maintain feature parity with the web frontend while leverag
 
 1. WHEN the app goes to background during a call THEN the system SHALL maintain the WebRTC connection and continue audio streaming
 2. WHEN an incoming phone call occurs THEN the system SHALL pause the ChatRT session and resume after the call ends
-3. WHEN the device battery is low THEN the system SHALL offer to reduce video quality or switch to audio-only mode
-4. WHEN the user connects/disconnects headphones THEN the system SHALL automatically route audio to the appropriate output
-5. WHEN the device orientation changes THEN the system SHALL adapt the UI layout while maintaining video aspect ratios
-6. WHEN the app is killed by the system THEN the system SHALL properly clean up WebRTC connections and release resources
+3. WHEN the user connects/disconnects headphones THEN the system SHALL automatically route audio to the appropriate output
+4. WHEN the device orientation changes THEN the system SHALL adapt the UI layout while maintaining video aspect ratios
+5. WHEN the app is killed by the system THEN the system SHALL properly clean up WebRTC connections and release resources
 
 ### Requirement 6
 
-**User Story:** As a mobile user, I want to configure app settings and preferences, so that I can customize the ChatRT experience to my needs and device capabilities.
+**User Story:** As someone using a brand new application, I prefer it to be on the latest technology stacks, both visually and technologically.
 
-#### Acceptance Criteria
-
-1. WHEN the user opens settings THEN the system SHALL display options for default video mode, audio quality, and camera preferences
-2. WHEN the user changes the default camera THEN the system SHALL remember this preference for future sessions
-3. WHEN the user adjusts audio quality settings THEN the system SHALL apply changes to the WebRTC configuration
-4. WHEN the user enables/disables debug logging THEN the system SHALL persist this setting across app restarts
-5. WHEN the user configures server settings THEN the system SHALL validate the connection and save working configurations
+1. WHEN an application is released, THEN all dependent packages SHALL be up to date.
+2. WHEN the user uses the UI, THEN they SHALL see a well designed Material 3 Expressive UI.
+3. WHEN the user hacks on the application, THEN they shall be able to use a well designed Kotlin Multiplatform codebase.
