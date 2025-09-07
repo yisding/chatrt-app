@@ -8,7 +8,7 @@
   - ✅ Basic Android manifest and activity created
   - _Requirements: 1.1, 2.1, 3.1_
 
-- [ ] 2. Add ChatRT-specific dependencies and configuration
+- [x] 2. Add ChatRT-specific dependencies and configuration
 
   - Add WebRTC Android SDK dependency (org.webrtc:google-webrtc)
   - Add Koin for dependency injection (multiplatform compatible)

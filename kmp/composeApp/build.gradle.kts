@@ -22,6 +22,15 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            
+            // WebRTC Android SDK
+            implementation(libs.webrtc.android)
+            
+            // Koin for Compose
+            implementation(libs.koin.compose)
+            
+            // Accompanist Permissions for Android permission handling
+            implementation(libs.accompanist.permissions)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
