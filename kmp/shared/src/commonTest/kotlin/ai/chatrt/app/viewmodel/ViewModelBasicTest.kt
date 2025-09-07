@@ -163,6 +163,8 @@ class ViewModelBasicTest {
         override suspend fun stopConnection(): Result<Unit> = Result.success(Unit)
         override fun isConnected(): Boolean = _connectionState.value == ConnectionState.CONNECTED
         override fun getCurrentConnectionState(): ConnectionState = _connectionState.value
+        override suspend fun switchCamera(): Result<Unit> = Result.success(Unit)
+        override suspend fun updateVideoMode(videoMode: VideoMode): Result<Unit> = Result.success(Unit)
     }
 
     private class MockSettingsRepository : SettingsRepository {

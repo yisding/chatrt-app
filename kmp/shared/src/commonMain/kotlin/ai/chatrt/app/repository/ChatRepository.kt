@@ -4,6 +4,7 @@ import ai.chatrt.app.models.CallRequest
 import ai.chatrt.app.models.CallResponse
 import ai.chatrt.app.models.ConnectionState
 import ai.chatrt.app.models.LogEntry
+import ai.chatrt.app.models.VideoMode
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -53,4 +54,14 @@ interface ChatRepository {
      * @return Current connection state
      */
     fun getCurrentConnectionState(): ConnectionState
+    
+    /**
+     * Switches camera during an active call
+     */
+    suspend fun switchCamera(): Result<Unit>
+    
+    /**
+     * Updates video mode during an active call
+     */
+    suspend fun updateVideoMode(videoMode: VideoMode): Result<Unit>
 }

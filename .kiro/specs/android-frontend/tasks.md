@@ -45,7 +45,7 @@
   - Write unit tests for ViewModel state management and business logic
   - _Requirements: 1.1, 1.6, 2.1, 3.1, 4.1, 5.1, 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 6. Create platform abstraction layer (expect/actual)
+- [x] 6. Create platform abstraction layer (expect/actual)
 
   - Define PlatformManager interface with expect declarations in shared module
   - Create WebRtcManager, AudioManager, VideoManager interfaces with expect declarations
@@ -55,7 +55,7 @@
   - Implement actual declarations for JVM platform in jvmMain
   - _Requirements: 1.2, 1.3, 1.5, 2.2, 2.3, 3.1, 3.2_
 
-- [ ] 6.1 Complete ChatRepository implementation with WebRTC integration
+- [x] 6.1 Complete ChatRepository implementation with WebRTC integration
 
   - Update ChatRepositoryImpl to integrate with WebRtcManager for actual SDP offer creation
   - Implement connection monitoring using WebSocket observer pattern

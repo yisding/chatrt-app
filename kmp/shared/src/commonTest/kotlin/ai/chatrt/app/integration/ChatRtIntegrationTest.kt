@@ -4,9 +4,11 @@ import ai.chatrt.app.models.*
 import ai.chatrt.app.network.ChatRtApiService
 import ai.chatrt.app.repository.ChatRepositoryImpl
 import ai.chatrt.app.repository.SettingsRepositoryImpl
+import ai.chatrt.app.repository.MockWebRtcManager
 import kotlin.test.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.delay
 
 /**
  * Integration tests for the complete ChatRT system
@@ -18,7 +20,8 @@ class ChatRtIntegrationTest {
     fun testCompleteWorkflow() = runTest {
         // Given - Set up the complete system
         val apiService = ChatRtApiService("https://test-api.chatrt.com")
-        val chatRepository = ChatRepositoryImpl(apiService)
+        val mockWebRtcManager = MockWebRtcManager()
+        val chatRepository = ChatRepositoryImpl(apiService, mockWebRtcManager)
         val settingsRepository = SettingsRepositoryImpl()
         
         try {
@@ -77,7 +80,8 @@ class ChatRtIntegrationTest {
             assertTrue(logsAfterCall.any { it.message.contains("Failed to create call") })
             
             // Test 4: State management
-            chatRepository.simulateConnectionStateChange(ConnectionState.CONNECTED)
+            mockWebRtcManager.simulateConnectionStateChange(ConnectionState.CONNECTED)
+            delay(100) // Allow state to propagate
             assertTrue(chatRepository.isConnected())
             assertEquals(ConnectionState.CONNECTED, chatRepository.getCurrentConnectionState())
             
@@ -95,6 +99,7 @@ class ChatRtIntegrationTest {
             assertEquals(AppSettings(), finalSettings)
             
         } finally {
+            chatRepository.cleanup()
             apiService.close()
         }
     }
@@ -102,7 +107,8 @@ class ChatRtIntegrationTest {
     @Test
     fun testErrorHandling() = runTest {
         val apiService = ChatRtApiService("https://invalid-url-that-does-not-exist.com")
-        val repository = ChatRepositoryImpl(apiService)
+        val mockWebRtcManager = MockWebRtcManager()
+        val repository = ChatRepositoryImpl(apiService, mockWebRtcManager)
         
         try {
             // Test API error handling
@@ -132,6 +138,7 @@ class ChatRtIntegrationTest {
             assertTrue(logs.any { it.level == LogLevel.ERROR })
             
         } finally {
+            repository.cleanup()
             apiService.close()
         }
     }

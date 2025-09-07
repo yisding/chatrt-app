@@ -337,5 +337,13 @@ class MainViewModelTest {
         override fun getCurrentConnectionState(): ConnectionState {
             return _connectionState.value
         }
+        
+        override suspend fun switchCamera(): Result<Unit> {
+            return Result.success(Unit)
+        }
+        
+        override suspend fun updateVideoMode(videoMode: VideoMode): Result<Unit> {
+            return Result.success(Unit)
+        }
     }
 }
