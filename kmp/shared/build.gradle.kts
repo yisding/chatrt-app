@@ -37,6 +37,9 @@ kotlin {
             
             // Kotlinx serialization for JSON handling
             implementation(libs.kotlinx.serialization.json)
+            
+            // Kotlinx datetime for timestamp handling
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
         }
         
         androidMain.dependencies {
@@ -54,6 +57,7 @@ kotlin {
         
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
         }
     }
 }
