@@ -63,38 +63,41 @@
   - Wire up all dependencies and test injection setup
   - _Requirements: 1.1_
 
-- [ ] 8. Build shared UI components with Compose Multiplatform
-
-  - Create ConnectionStatusIndicator composable with Material 3 design and connection state animations
-  - Implement VideoModeSelector with Material 3 radio buttons for audio/video/screen modes
-  - Add VideoPreview composable for camera and screen capture display with proper aspect ratios
-  - Create ControlButtons composable for start/stop, settings, and camera switching with Material 3 styling
-  - Implement LogsDisplay composable with scrollable log entries, timestamp formatting, and log level colors
-  - Add ErrorDisplay composable for showing ChatRtError messages with retry actions
-  - Create OptimizationSuggestion composable for platform optimization recommendations
+- [ ] 8. Build shared UI components with Compose Multiplatform and Material 3 Expressive
+  - Upgrade to Compose Multiplatform 1.9.0-rc1.
+  - Set up Material 3 Expressive theme with custom color scheme, typography, and motion system
+  - Create ConnectionStatusIndicator composable with Material 3 Expressive design and connection state animations
+  - Implement VideoModeSelector with Material 3 Expressive radio buttons and enhanced visual feedback
+  - Add VideoPreview composable for camera and screen capture display with Material 3 Expressive containers
+  - Create ControlButtons composable with Material 3 Expressive FABs, buttons, and interactive elements
+  - Implement LogsDisplay composable with Material 3 Expressive cards, scrollable entries, and enhanced typography
+  - Add ErrorDisplay composable with Material 3 Expressive error styling and retry actions
+  - Create OptimizationSuggestion composable with Material 3 Expressive suggestion cards and animations
+  - Apply Material 3 Expressive motion system for smooth transitions and state changes
   - _Requirements: 1.1, 1.6, 2.1, 2.3, 2.5, 3.1, 3.3, 4.1, 4.2, 4.4_
 
 - [ ] 9. Build main screen UI with ChatRT functionality
-
-  - Replace demo App.kt with MainScreen composable using Material 3 design
-  - Integrate MainViewModel with connection controls and status display
-  - Add video preview area with proper layout for different video modes
-  - Implement real-time logging display with expandable/collapsible logs section
-  - Handle video stream rendering and aspect ratio management for different orientations
-  - Add error handling UI with user-friendly error messages and retry buttons
-  - Add platform optimization suggestion UI with accept/dismiss actions
+  - Replace demo App.kt with MainScreen composable using Material 3 Expressive theme
+  - Integrate MainViewModel with connection controls and status display using Material 3 Expressive components
+  - Add video preview area with Material 3 Expressive layout and proper aspect ratio management
+  - Implement real-time logging display with Material 3 Expressive expandable/collapsible sections
+  - Handle video stream rendering with Material 3 Expressive containers for different orientations
+  - Add error handling UI with Material 3 Expressive error styling and retry buttons
+  - Add platform optimization suggestion UI with Material 3 Expressive cards and animations
+  - Apply Material 3 Expressive motion system for screen transitions and interactions
   - Write UI tests for main screen interactions and state updates
   - _Requirements: 1.1, 1.6, 2.1, 3.1, 4.1_
 
 - [ ] 10. Implement settings screen and navigation
 
   - Add Compose Navigation dependency to shared module
-  - Create SettingsScreen composable with Material 3 preference categories and sections
-  - Integrate SettingsViewModel with two-way data binding for all settings
-  - Set up NavHost with routes for main and settings screens with Material 3 navigation
-  - Add video mode, audio quality, and camera preference controls with proper validation
-  - Implement server URL configuration with real-time validation feedback
-  - Create debug logging toggle and reset to defaults functionality
+  - Create SettingsScreen composable with Material 3 Expressive preference categories and sections
+  - Integrate SettingsViewModel with two-way data binding for all settings using Material 3 Expressive components
+  - Set up NavHost with routes for main and settings screens with Material 3 Expressive navigation
+  - Add video mode, audio quality, and camera preference controls with Material 3 Expressive styling and validation
+  - Implement server URL configuration with Material 3 Expressive text fields and real-time validation feedback
+  - Create debug logging toggle and reset to defaults functionality with Material 3 Expressive switches and buttons
+  - Apply Material 3 Expressive motion system for navigation transitions
   - Write UI tests for settings screen and navigation functionality
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
@@ -152,6 +155,7 @@
   - Test audio-only, webcam, and screen sharing modes thoroughly
   - Validate error handling and recovery scenarios
   - Perform performance testing and memory leak detection
-  - Add accessibility features and testing
-  - Polish UI/UX with Material 3 Expressive Theme refinements
+  - Add accessibility features and testing with Material 3 Expressive accessibility guidelines
+  - Polish UI/UX with Material 3 Expressive Theme refinements including advanced animations and micro-interactions
+  - Fine-tune Material 3 Expressive color schemes, typography scales, and motion curves for optimal user experience
   - _Requirements: 1.1, 2.1, 3.1, 4.1, 5.1, 6.1, 6.2_
