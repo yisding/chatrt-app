@@ -1,4 +1,4 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -15,8 +15,6 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
-    jvm()
     
     sourceSets {
         androidMain.dependencies {
@@ -46,10 +44,7 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutinesSwing)
-        }
+
     }
 }
 
@@ -82,16 +77,11 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    
+    // Android instrumented test dependencies
+    androidTestImplementation(libs.androidx.testExt.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.koin.test)
 }
 
-compose.desktop {
-    application {
-        mainClass = "ai.chatrt.app.MainKt"
 
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "ai.chatrt.app"
-            packageVersion = "1.0.0"
-        }
-    }
-}

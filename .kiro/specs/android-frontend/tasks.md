@@ -52,14 +52,12 @@
   - Define PermissionManager and ScreenCaptureManager interfaces with expect declarations
   - Add platform-specific system integration interfaces (LifecycleManager)
   - Implement actual declarations for Android platform in androidMain
-  - Implement actual declarations for JVM platform in jvmMain
   - _Requirements: 1.2, 1.3, 1.5, 2.2, 2.3, 3.1, 3.2_
 
-- [ ] 7. Set up dependency injection with Koin
+- [x] 7. Set up dependency injection with Koin
 
   - Create shared Koin module for repositories and ViewModels in commonMain
   - Create Android-specific Koin module for platform managers in androidMain
-  - Create JVM-specific Koin module for platform managers in jvmMain
   - Implement Android Application class with Koin initialization
   - Update MainActivity to use Koin for dependency injection
   - Wire up all dependencies and test injection setup

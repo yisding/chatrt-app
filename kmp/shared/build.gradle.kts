@@ -23,8 +23,6 @@ kotlin {
         }
     }
     
-    jvm()
-    
     sourceSets {
         commonMain.dependencies {
             // Koin for dependency injection
@@ -53,13 +51,10 @@ kotlin {
             implementation(libs.koin.android)
         }
         
-        jvmMain.dependencies {
-            // Ktor client JVM engine
-            implementation(libs.ktor.client.java)
-        }
         
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.koin.test)
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
         }
     }
