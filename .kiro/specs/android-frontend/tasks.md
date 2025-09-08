@@ -50,76 +50,22 @@
   - Define PlatformManager interface with expect declarations in shared module
   - Create WebRtcManager, AudioManager, VideoManager interfaces with expect declarations
   - Define PermissionManager and ScreenCaptureManager interfaces with expect declarations
-  - Add platform-specific system integration interfaces (NetworkMonitor, BatteryMonitor, LifecycleManager)
+  - Add platform-specific system integration interfaces (LifecycleManager)
   - Implement actual declarations for Android platform in androidMain
   - Implement actual declarations for JVM platform in jvmMain
   - _Requirements: 1.2, 1.3, 1.5, 2.2, 2.3, 3.1, 3.2_
 
-- [x] 6.1 Complete ChatRepository implementation with WebRTC integration
-
-  - Update ChatRepositoryImpl to integrate with WebRtcManager for actual SDP offer creation
-  - Implement connection monitoring using WebSocket observer pattern
-  - Add proper error handling and retry logic for network operations
-  - Implement connection state management and real-time updates
-  - Write integration tests for repository with mock WebRTC manager
-  - _Requirements: 1.3, 1.4, 4.5, 6.5_
-
-- [ ] 7. Implement Android WebRTC manager
-
-  - Create AndroidWebRtcManager with PeerConnection lifecycle management
-  - Set up WebRTC factory and peer connection configuration
-  - Implement SDP offer creation and remote description handling
-  - Add connection state callbacks and error handling
-  - Write unit tests for WebRTC connection lifecycle
-  - _Requirements: 1.3, 1.4_
-
-- [ ] 8. Implement Android permission management
-
-  - Create AndroidPermissionManager with microphone, camera, and screen capture handling
-  - Implement permission request flows using Accompanist Permissions
-  - Add permission rationale dialogs and settings navigation
-  - Handle permission denial scenarios with appropriate fallbacks
-  - Write unit tests for permission state management
-  - _Requirements: 1.2, 2.2, 3.2_
-
-- [ ] 9. Implement Android audio management system
-
-  - Create AndroidAudioManager for audio routing and device management
-  - Handle audio focus changes and headset connection events
-  - Implement audio track creation and management
-  - Add support for different audio devices (speaker, headphones, Bluetooth)
-  - Write tests for audio routing logic
-  - _Requirements: 1.5, 5.4_
-
-- [ ] 10. Implement Android video capture and camera management
-
-  - Create AndroidVideoManager for camera stream creation
-  - Implement Camera2 API integration for front/back camera access
-  - Add camera switching functionality and preview handling
-  - Handle camera permissions and availability checks
-  - Write tests for camera functionality and error scenarios
-  - _Requirements: 2.2, 2.3, 2.4_
-
-- [ ] 11. Implement Android screen capture functionality
-
-  - Create AndroidScreenCaptureManager using MediaProjection API
-  - Implement screen recording permission flow and virtual display setup
-  - Add persistent notification for active screen recording
-  - Handle screen capture lifecycle and cleanup
-  - Write tests for screen capture functionality
-  - _Requirements: 3.1, 3.2, 3.3, 3.4_
-
-- [ ] 12. Set up dependency injection with Koin
+- [ ] 7. Set up dependency injection with Koin
 
   - Create shared Koin module for repositories and ViewModels in commonMain
   - Create Android-specific Koin module for platform managers in androidMain
   - Create JVM-specific Koin module for platform managers in jvmMain
   - Implement Android Application class with Koin initialization
-  - Implement JVM main function with Koin initialization
+  - Update MainActivity to use Koin for dependency injection
   - Wire up all dependencies and test injection setup
   - _Requirements: 1.1_
 
-- [ ] 13. Build shared UI components with Compose Multiplatform
+- [ ] 8. Build shared UI components with Compose Multiplatform
 
   - Create ConnectionStatusIndicator composable with Material 3 design and connection state animations
   - Implement VideoModeSelector with Material 3 radio buttons for audio/video/screen modes
@@ -130,7 +76,7 @@
   - Create OptimizationSuggestion composable for platform optimization recommendations
   - _Requirements: 1.1, 1.6, 2.1, 2.3, 2.5, 3.1, 3.3, 4.1, 4.2, 4.4_
 
-- [ ] 14. Build main screen UI with ChatRT functionality
+- [ ] 9. Build main screen UI with ChatRT functionality
 
   - Replace demo App.kt with MainScreen composable using Material 3 design
   - Integrate MainViewModel with connection controls and status display
@@ -142,75 +88,59 @@
   - Write UI tests for main screen interactions and state updates
   - _Requirements: 1.1, 1.6, 2.1, 3.1, 4.1_
 
-- [ ] 15. Implement settings screen and configuration UI
-
-  - Create SettingsScreen composable with Material 3 preference categories and sections
-  - Integrate SettingsViewModel with two-way data binding for all settings
-  - Add video mode, audio quality, and camera preference controls with proper validation
-  - Implement server URL configuration with real-time validation feedback and test connection
-  - Create debug logging toggle and advanced settings section with proper grouping
-  - Add reset to defaults functionality with confirmation dialog
-  - Add save success/error feedback with snackbars or toast messages
-  - Write UI tests for settings screen functionality and validation
-  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
-
-- [ ] 16. Add app navigation and routing
+- [ ] 10. Implement settings screen and navigation
 
   - Add Compose Navigation dependency to shared module
-  - Set up NavHost with routes for main and settings screens
-  - Handle navigation state management and proper back navigation behavior
-  - Add proper state preservation during navigation with ViewModel scoping
-  - Implement Material 3 navigation animations and transitions
-  - Add navigation drawer or bottom navigation for easy screen switching
-  - Write tests for navigation flows and state management
-  - _Requirements: 6.1_
+  - Create SettingsScreen composable with Material 3 preference categories and sections
+  - Integrate SettingsViewModel with two-way data binding for all settings
+  - Set up NavHost with routes for main and settings screens with Material 3 navigation
+  - Add video mode, audio quality, and camera preference controls with proper validation
+  - Implement server URL configuration with real-time validation feedback
+  - Create debug logging toggle and reset to defaults functionality
+  - Write UI tests for settings screen and navigation functionality
+  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 17. Implement Android lifecycle and background behavior
+- [ ] 11. Complete Android WebRTC manager implementation
 
+  - Complete AndroidWebRtcManager with actual WebRTC Android SDK integration
+  - Set up PeerConnectionFactory and peer connection configuration
+  - Implement real SDP offer creation and remote description handling
+  - Add ICE candidate handling and connection state callbacks
+  - Integrate with Android media capture (audio/video/screen)
+  - Write unit tests for WebRTC connection lifecycle
+  - _Requirements: 1.3, 1.4_
+
+- [ ] 12. Complete Android platform manager implementations
+
+  - Complete AndroidPermissionManager with microphone, camera, and screen capture handling using Accompanist Permissions
+  - Complete AndroidAudioManager for audio routing, device management, and focus handling
+  - Complete AndroidVideoManager with Camera2 API integration for front/back camera access
+  - Complete AndroidScreenCaptureManager using MediaProjection API with notification support
+  - Complete AndroidLifecycleManager for app lifecycle management
+  - Write unit tests for all platform manager implementations
+  - _Requirements: 1.2, 1.5, 2.2, 2.3, 2.4, 3.1, 3.2, 3.3, 3.4, 5.3_
+
+- [ ] 13. Implement Android lifecycle and background service
+
+  - Create ChatRtService for background call continuation
   - Handle app backgrounding during active calls with service continuation
-  - Add incoming call detection and ChatRT session pausing
+  - Add incoming call detection and ChatRT session pausing using TelephonyManager
   - Implement proper resource cleanup on app termination
   - Handle device orientation changes with UI adaptation
+  - Create notification system for active screen recording and call status
   - Write tests for lifecycle scenarios and background behavior
-  - _Requirements: 5.1, 5.2, 5.3, 5.6_
+  - _Requirements: 3.3, 5.1, 5.2, 5.3, 5.6_
 
-- [ ] 18. Add Android system integration features
-
-  - Implement battery level monitoring and low battery optimizations
-  - Add headphone connection/disconnection detection
-  - Create network state monitoring and quality adaptation
-  - Handle device state changes with appropriate UI feedback
-  - Write tests for device state handling scenarios
-  - _Requirements: 5.3, 5.4, 5.5_
-
-- [ ] 19. Create notification system for background operations
-
-  - Implement persistent notification for active screen recording
-  - Add call status notifications for background sessions
-  - Handle notification actions for call control
-  - Implement proper notification cleanup and management
-  - Write tests for notification functionality
-  - _Requirements: 3.3, 5.1_
-
-- [ ] 20. Add comprehensive error handling and user feedback
+- [ ] 14. Add comprehensive error handling and system integration
 
   - Implement error handling throughout the app with ChatRtError types
-  - Create user-friendly error messages and recovery suggestions
-  - Add retry mechanisms for recoverable errors
-  - Implement graceful degradation for feature unavailability
-  - Write tests for error scenarios and recovery flows
-  - _Requirements: 1.6, 2.6, 3.5, 4.3_
+  - Create user-friendly error messages and recovery suggestions with retry mechanisms
+  - Add headphone connection/disconnection detection with audio routing
+  - Handle device state changes with appropriate UI feedback
+  - Write tests for error scenarios, recovery flows, and system integration
+  - _Requirements: 1.6, 2.6, 3.5, 4.3, 5.3_
 
-- [ ] 21. Implement network quality monitoring and adaptation
-
-  - Add network state monitoring and quality detection
-  - Implement automatic video quality reduction on poor connections
-  - Handle network disconnection and reconnection scenarios
-  - Add connection retry logic with exponential backoff
-  - Write tests for network adaptation functionality
-  - _Requirements: 4.5, 5.5_
-
-- [ ] 22. Create comprehensive logging and debugging system
+- [ ] 15. Create comprehensive logging and debugging system
 
   - Implement structured logging with different levels and categories
   - Add WebRTC event logging and connection diagnostics
@@ -219,10 +149,11 @@
   - Write tests for logging system performance and reliability
   - _Requirements: 4.2, 4.4, 6.4_
 
-- [ ] 23. Add final integration testing and polish
+- [ ] 16. Add final integration testing and polish
   - Create end-to-end integration tests for complete user flows
   - Test audio-only, webcam, and screen sharing modes thoroughly
   - Validate error handling and recovery scenarios
   - Perform performance testing and memory leak detection
   - Add accessibility features and testing
-  - _Requirements: 1.1, 2.1, 3.1, 4.1, 5.1, 6.1_
+  - Polish UI/UX with Material 3 Expressive Theme refinements
+  - _Requirements: 1.1, 2.1, 3.1, 4.1, 5.1, 6.1, 6.2_
