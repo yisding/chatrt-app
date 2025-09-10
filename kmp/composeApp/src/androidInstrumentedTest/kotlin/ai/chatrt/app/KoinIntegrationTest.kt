@@ -14,20 +14,19 @@ import kotlin.test.assertNotNull
  */
 @RunWith(AndroidJUnit4::class)
 class KoinIntegrationTest : KoinTest {
-    
     @Test
     fun testKoinDependencyInjectionWorks() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val application = context.applicationContext as ChatRtApplication
-        
+
         // Verify that Koin is initialized
         val koin = getKoin()
         assertNotNull(koin)
-        
+
         // Verify that ViewModels can be created
         val mainViewModel = koin.get<MainViewModel>()
         val settingsViewModel = koin.get<SettingsViewModel>()
-        
+
         assertNotNull(mainViewModel)
         assertNotNull(settingsViewModel)
     }

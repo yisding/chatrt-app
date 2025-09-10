@@ -15,18 +15,15 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            
+
             // WebRTC Android SDK
             implementation(libs.webrtc.android)
-            
-            // Koin for Compose
-            implementation(libs.koin.compose)
-            
+
             // Accompanist Permissions for Android permission handling
             implementation(libs.accompanist.permissions)
         }
@@ -40,25 +37,36 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
-            
+
+            // Koin for Compose (multiplatform)
+            implementation(libs.koin.compose)
+
             // Kotlinx datetime for timestamp handling in UI components
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-
     }
 }
 
 android {
     namespace = "ai.chatrt.app"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.android.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
         applicationId = "ai.chatrt.app"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.android.targetSdk
+                .get()
+                .toInt()
         versionCode = 1
         versionName = "1.0"
     }
@@ -80,11 +88,9 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-    
+
     // Android instrumented test dependencies
     androidTestImplementation(libs.androidx.testExt.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.koin.test)
 }
-
-

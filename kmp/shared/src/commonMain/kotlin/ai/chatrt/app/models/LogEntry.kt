@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class LogEntry(
     val timestamp: Long,
     val message: String,
-    val level: LogLevel = LogLevel.INFO
+    val level: LogLevel = LogLevel.INFO,
 )
 
 /**
@@ -20,5 +20,5 @@ enum class LogLevel {
     DEBUG,
     INFO,
     WARNING,
-    ERROR
+    ERROR,
 }

@@ -8,7 +8,6 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class ChatRtErrorTests {
-
     private val json = Json { prettyPrint = true }
 
     @Test
@@ -73,10 +72,11 @@ class ChatRtErrorTests {
 
     @Test
     fun testApiErrorSerialization() {
-        val apiError = ChatRtError.ApiError(
-            code = 404,
-            message = "Resource not found"
-        )
+        val apiError =
+            ChatRtError.ApiError(
+                code = 404,
+                message = "Resource not found",
+            )
 
         val serialized = json.encodeToString(apiError)
         val deserialized = json.decodeFromString<ChatRtError.ApiError>(serialized)
@@ -87,10 +87,11 @@ class ChatRtErrorTests {
 
     @Test
     fun testApiErrorProperties() {
-        val apiError = ChatRtError.ApiError(
-            code = 500,
-            message = "Internal server error"
-        )
+        val apiError =
+            ChatRtError.ApiError(
+                code = 500,
+                message = "Internal server error",
+            )
 
         assertEquals(500, apiError.code)
         assertEquals("Internal server error", apiError.message)
@@ -109,18 +110,19 @@ class ChatRtErrorTests {
 
     @Test
     fun testErrorMessages() {
-        val errors = listOf(
-            ChatRtError.NetworkError,
-            ChatRtError.PermissionDenied,
-            ChatRtError.WebRtcError,
-            ChatRtError.AudioDeviceError,
-            ChatRtError.CameraError,
-            ChatRtError.ScreenCaptureError,
-            ChatRtError.ServiceConnectionError,
-            ChatRtError.PhoneCallInterruptionError,
-            ChatRtError.BatteryOptimizationError,
-            ChatRtError.NetworkQualityError
-        )
+        val errors =
+            listOf(
+                ChatRtError.NetworkError,
+                ChatRtError.PermissionDenied,
+                ChatRtError.WebRtcError,
+                ChatRtError.AudioDeviceError,
+                ChatRtError.CameraError,
+                ChatRtError.ScreenCaptureError,
+                ChatRtError.ServiceConnectionError,
+                ChatRtError.PhoneCallInterruptionError,
+                ChatRtError.BatteryOptimizationError,
+                ChatRtError.NetworkQualityError,
+            )
 
         errors.forEach { error ->
             assertNotNull(error.message)

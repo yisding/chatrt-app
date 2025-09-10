@@ -10,7 +10,7 @@ data class PlatformOptimization(
     val recommendedVideoMode: VideoMode,
     val recommendedAudioQuality: AudioQuality,
     val disableVideoPreview: Boolean = false,
-    val reason: OptimizationReason
+    val reason: OptimizationReason,
 )
 
 /**
@@ -18,10 +18,10 @@ data class PlatformOptimization(
  */
 @Serializable
 enum class OptimizationReason {
-    LOW_BATTERY,        // Android-specific
-    HIGH_CPU_USAGE,     // Desktop-specific
-    LOW_MEMORY,         // Both platforms
-    POOR_NETWORK        // Both platforms
+    LOW_BATTERY, // Android-specific
+    HIGH_CPU_USAGE, // Desktop-specific
+    LOW_MEMORY, // Both platforms
+    POOR_NETWORK, // Both platforms
 }
 
 /**
@@ -31,7 +31,7 @@ enum class OptimizationReason {
 data class SystemInterruption(
     val type: InterruptionType,
     val shouldPause: Boolean,
-    val canResume: Boolean = true
+    val canResume: Boolean = true,
 )
 
 /**
@@ -39,10 +39,10 @@ data class SystemInterruption(
  */
 @Serializable
 enum class InterruptionType {
-    PHONE_CALL,         // Android-specific
-    SYSTEM_CALL,        // Desktop-specific (e.g., Skype, Teams)
-    LOW_POWER_MODE,     // Both platforms
-    NETWORK_LOSS        // Both platforms
+    PHONE_CALL, // Android-specific
+    SYSTEM_CALL, // Desktop-specific (e.g., Skype, Teams)
+    LOW_POWER_MODE, // Both platforms
+    NETWORK_LOSS, // Both platforms
 }
 
 /**
@@ -53,7 +53,7 @@ data class ResourceConstraints(
     val availableMemory: Long,
     val cpuUsage: Float,
     val networkBandwidth: Long,
-    val platformSpecific: Map<String, String> = emptyMap()
+    val platformSpecific: Map<String, String> = emptyMap(),
 )
 
 /**
@@ -64,7 +64,7 @@ enum class NetworkQuality {
     POOR,
     FAIR,
     GOOD,
-    EXCELLENT
+    EXCELLENT,
 }
 
 /**
@@ -74,7 +74,7 @@ enum class NetworkQuality {
 enum class PowerSavingMode {
     NONE,
     MODERATE,
-    AGGRESSIVE
+    AGGRESSIVE,
 }
 
 /**
@@ -84,5 +84,5 @@ enum class PowerSavingMode {
 data class PowerSavingRecommendation(
     val mode: PowerSavingMode,
     val reason: String,
-    val estimatedBatteryGain: String
+    val estimatedBatteryGain: String,
 )

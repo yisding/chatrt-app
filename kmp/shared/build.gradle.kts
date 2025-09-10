@@ -12,46 +12,45 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
         }
     }
-    
+
     sourceSets {
         commonMain.dependencies {
             // Koin for dependency injection
             implementation(libs.koin.core)
-            
+
             // Ktor client for HTTP communication
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
-            
+
             // Kotlinx serialization for JSON handling
             implementation(libs.kotlinx.serialization.json)
-            
+
             // Kotlinx datetime for timestamp handling
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
-            
+
             // ViewModel support for multiplatform
             implementation(libs.androidx.lifecycle.viewmodelCompose)
         }
-        
+
         androidMain.dependencies {
             // Ktor client Android engine
             implementation(libs.ktor.client.android)
-            
+
             // Koin Android
             implementation(libs.koin.android)
         }
-        
-        
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.koin.test)
@@ -62,12 +61,18 @@ kotlin {
 
 android {
     namespace = "ai.chatrt.app.shared"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.android.compileSdk
+            .get()
+            .toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
     defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
     }
 }

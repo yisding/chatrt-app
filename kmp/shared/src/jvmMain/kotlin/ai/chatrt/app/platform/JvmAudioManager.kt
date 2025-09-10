@@ -1,16 +1,15 @@
 package ai.chatrt.app.platform
 
 import ai.chatrt.app.models.AudioQuality
-import javax.sound.sampled.AudioSystem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.sound.sampled.AudioSystem
 
 /** JVM/Desktop implementation of AudioManager using Java Sound API */
 class JvmAudioManager : AudioManager {
-
     private val _audioDeviceChanges =
-            MutableStateFlow(AudioDevice("default", "Default", AudioDeviceType.SPEAKER))
+        MutableStateFlow(AudioDevice("default", "Default", AudioDeviceType.SPEAKER))
 
     override suspend fun initialize() {
         // Initialize Java Sound API
@@ -47,31 +46,31 @@ class JvmAudioManager : AudioManager {
             mixerInfos.forEachIndexed { index, mixerInfo ->
                 val mixer = AudioSystem.getMixer(mixerInfo)
                 val deviceType =
-                        when {
-                            mixerInfo.name.contains("speaker", ignoreCase = true) ->
-                                    AudioDeviceType.SPEAKER
-                            mixerInfo.name.contains("headphone", ignoreCase = true) ->
-                                    AudioDeviceType.WIRED_HEADSET
-                            mixerInfo.name.contains("bluetooth", ignoreCase = true) ->
-                                    AudioDeviceType.BLUETOOTH_HEADSET
-                            mixerInfo.name.contains("usb", ignoreCase = true) ->
-                                    AudioDeviceType.USB_HEADSET
-                            else -> AudioDeviceType.UNKNOWN
-                        }
+                    when {
+                        mixerInfo.name.contains("speaker", ignoreCase = true) ->
+                            AudioDeviceType.SPEAKER
+                        mixerInfo.name.contains("headphone", ignoreCase = true) ->
+                            AudioDeviceType.WIRED_HEADSET
+                        mixerInfo.name.contains("bluetooth", ignoreCase = true) ->
+                            AudioDeviceType.BLUETOOTH_HEADSET
+                        mixerInfo.name.contains("usb", ignoreCase = true) ->
+                            AudioDeviceType.USB_HEADSET
+                        else -> AudioDeviceType.UNKNOWN
+                    }
 
                 devices.add(
-                        AudioDevice(
-                                id = index.toString(),
-                                name = mixerInfo.name,
-                                type = deviceType,
-                                isDefault = index == 0
-                        )
+                    AudioDevice(
+                        id = index.toString(),
+                        name = mixerInfo.name,
+                        type = deviceType,
+                        isDefault = index == 0,
+                    ),
                 )
             }
         } catch (e: Exception) {
             // Fallback to default device
             devices.add(
-                    AudioDevice("default", "Default Audio Device", AudioDeviceType.SPEAKER, true)
+                AudioDevice("default", "Default Audio Device", AudioDeviceType.SPEAKER, true),
             )
         }
 
@@ -83,9 +82,7 @@ class JvmAudioManager : AudioManager {
         _audioDeviceChanges.value = device
     }
 
-    override suspend fun getCurrentAudioDevice(): AudioDevice? {
-        return _audioDeviceChanges.value
-    }
+    override suspend fun getCurrentAudioDevice(): AudioDevice? = _audioDeviceChanges.value
 
     override fun observeAudioDeviceChanges(): Flow<AudioDevice> = _audioDeviceChanges.asStateFlow()
 

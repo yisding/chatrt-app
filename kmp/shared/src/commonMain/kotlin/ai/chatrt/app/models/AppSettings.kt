@@ -11,7 +11,7 @@ data class AppSettings(
     val audioQuality: AudioQuality = AudioQuality.MEDIUM,
     val debugLogging: Boolean = false,
     val serverUrl: String = "",
-    val defaultCamera: CameraFacing = CameraFacing.FRONT
+    val defaultCamera: CameraFacing = CameraFacing.FRONT,
 )
 
 /**
@@ -21,7 +21,7 @@ data class AppSettings(
 enum class AudioQuality {
     LOW,
     MEDIUM,
-    HIGH
+    HIGH,
 }
 
 /**
@@ -30,5 +30,5 @@ enum class AudioQuality {
 @Serializable
 enum class CameraFacing {
     FRONT,
-    BACK
+    BACK,
 }

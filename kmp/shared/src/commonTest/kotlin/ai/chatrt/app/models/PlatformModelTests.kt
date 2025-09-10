@@ -8,17 +8,17 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class PlatformModelTests {
-
     private val json = Json { prettyPrint = true }
 
     @Test
     fun testPlatformOptimizationSerialization() {
-        val optimization = PlatformOptimization(
-            recommendedVideoMode = VideoMode.AUDIO_ONLY,
-            recommendedAudioQuality = AudioQuality.LOW,
-            disableVideoPreview = true,
-            reason = OptimizationReason.LOW_BATTERY
-        )
+        val optimization =
+            PlatformOptimization(
+                recommendedVideoMode = VideoMode.AUDIO_ONLY,
+                recommendedAudioQuality = AudioQuality.LOW,
+                disableVideoPreview = true,
+                reason = OptimizationReason.LOW_BATTERY,
+            )
 
         val serialized = json.encodeToString(optimization)
         val deserialized = json.decodeFromString<PlatformOptimization>(serialized)
@@ -31,22 +31,24 @@ class PlatformModelTests {
 
     @Test
     fun testPlatformOptimizationDefaults() {
-        val optimization = PlatformOptimization(
-            recommendedVideoMode = VideoMode.WEBCAM,
-            recommendedAudioQuality = AudioQuality.MEDIUM,
-            reason = OptimizationReason.POOR_NETWORK
-        )
+        val optimization =
+            PlatformOptimization(
+                recommendedVideoMode = VideoMode.WEBCAM,
+                recommendedAudioQuality = AudioQuality.MEDIUM,
+                reason = OptimizationReason.POOR_NETWORK,
+            )
 
         assertFalse(optimization.disableVideoPreview)
     }
 
     @Test
     fun testSystemInterruptionSerialization() {
-        val interruption = SystemInterruption(
-            type = InterruptionType.PHONE_CALL,
-            shouldPause = true,
-            canResume = false
-        )
+        val interruption =
+            SystemInterruption(
+                type = InterruptionType.PHONE_CALL,
+                shouldPause = true,
+                canResume = false,
+            )
 
         val serialized = json.encodeToString(interruption)
         val deserialized = json.decodeFromString<SystemInterruption>(serialized)
@@ -58,25 +60,28 @@ class PlatformModelTests {
 
     @Test
     fun testSystemInterruptionDefaults() {
-        val interruption = SystemInterruption(
-            type = InterruptionType.NETWORK_LOSS,
-            shouldPause = true
-        )
+        val interruption =
+            SystemInterruption(
+                type = InterruptionType.NETWORK_LOSS,
+                shouldPause = true,
+            )
 
         assertTrue(interruption.canResume)
     }
 
     @Test
     fun testResourceConstraintsSerialization() {
-        val constraints = ResourceConstraints(
-            availableMemory = 1024L * 1024L * 512L, // 512MB
-            cpuUsage = 75.5f,
-            networkBandwidth = 1000000L, // 1Mbps
-            platformSpecific = mapOf(
-                "batteryLevel" to "25",
-                "thermalState" to "normal"
+        val constraints =
+            ResourceConstraints(
+                availableMemory = 1024L * 1024L * 512L, // 512MB
+                cpuUsage = 75.5f,
+                networkBandwidth = 1000000L, // 1Mbps
+                platformSpecific =
+                    mapOf(
+                        "batteryLevel" to "25",
+                        "thermalState" to "normal",
+                    ),
             )
-        )
 
         val serialized = json.encodeToString(constraints)
         val deserialized = json.decodeFromString<ResourceConstraints>(serialized)
@@ -89,22 +94,24 @@ class PlatformModelTests {
 
     @Test
     fun testResourceConstraintsDefaults() {
-        val constraints = ResourceConstraints(
-            availableMemory = 1024L,
-            cpuUsage = 50.0f,
-            networkBandwidth = 100000L
-        )
+        val constraints =
+            ResourceConstraints(
+                availableMemory = 1024L,
+                cpuUsage = 50.0f,
+                networkBandwidth = 100000L,
+            )
 
         assertTrue(constraints.platformSpecific.isEmpty())
     }
 
     @Test
     fun testPowerSavingRecommendationSerialization() {
-        val recommendation = PowerSavingRecommendation(
-            mode = PowerSavingMode.MODERATE,
-            reason = "Battery level is below 20%",
-            estimatedBatteryGain = "30 minutes"
-        )
+        val recommendation =
+            PowerSavingRecommendation(
+                mode = PowerSavingMode.MODERATE,
+                reason = "Battery level is below 20%",
+                estimatedBatteryGain = "30 minutes",
+            )
 
         val serialized = json.encodeToString(recommendation)
         val deserialized = json.decodeFromString<PowerSavingRecommendation>(serialized)
@@ -117,7 +124,7 @@ class PlatformModelTests {
     @Test
     fun testOptimizationReasonValues() {
         val reasons = OptimizationReason.values()
-        
+
         assertTrue(reasons.contains(OptimizationReason.LOW_BATTERY))
         assertTrue(reasons.contains(OptimizationReason.HIGH_CPU_USAGE))
         assertTrue(reasons.contains(OptimizationReason.LOW_MEMORY))
@@ -127,7 +134,7 @@ class PlatformModelTests {
     @Test
     fun testInterruptionTypeValues() {
         val types = InterruptionType.values()
-        
+
         assertTrue(types.contains(InterruptionType.PHONE_CALL))
         assertTrue(types.contains(InterruptionType.SYSTEM_CALL))
         assertTrue(types.contains(InterruptionType.LOW_POWER_MODE))
@@ -137,7 +144,7 @@ class PlatformModelTests {
     @Test
     fun testNetworkQualityValues() {
         val qualities = NetworkQuality.values()
-        
+
         assertTrue(qualities.contains(NetworkQuality.POOR))
         assertTrue(qualities.contains(NetworkQuality.FAIR))
         assertTrue(qualities.contains(NetworkQuality.GOOD))
@@ -147,7 +154,7 @@ class PlatformModelTests {
     @Test
     fun testPowerSavingModeValues() {
         val modes = PowerSavingMode.values()
-        
+
         assertTrue(modes.contains(PowerSavingMode.NONE))
         assertTrue(modes.contains(PowerSavingMode.MODERATE))
         assertTrue(modes.contains(PowerSavingMode.AGGRESSIVE))

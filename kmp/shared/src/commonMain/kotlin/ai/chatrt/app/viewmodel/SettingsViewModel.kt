@@ -12,43 +12,47 @@ import kotlinx.coroutines.launch
  * Handles all user configuration options and preferences
  */
 class SettingsViewModel(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-
     // Complete app settings
     private val _settings = MutableStateFlow(AppSettings())
     val settings: StateFlow<AppSettings> = _settings.asStateFlow()
 
     // Individual setting properties for easier UI binding
-    val defaultVideoMode: StateFlow<VideoMode> = _settings.map { it.defaultVideoMode }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = VideoMode.AUDIO_ONLY
-    )
+    val defaultVideoMode: StateFlow<VideoMode> =
+        _settings.map { it.defaultVideoMode }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = VideoMode.AUDIO_ONLY,
+        )
 
-    val audioQuality: StateFlow<AudioQuality> = _settings.map { it.audioQuality }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = AudioQuality.MEDIUM
-    )
+    val audioQuality: StateFlow<AudioQuality> =
+        _settings.map { it.audioQuality }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = AudioQuality.MEDIUM,
+        )
 
-    val debugLogging: StateFlow<Boolean> = _settings.map { it.debugLogging }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = false
-    )
+    val debugLogging: StateFlow<Boolean> =
+        _settings.map { it.debugLogging }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false,
+        )
 
-    val serverUrl: StateFlow<String> = _settings.map { it.serverUrl }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = ""
-    )
+    val serverUrl: StateFlow<String> =
+        _settings.map { it.serverUrl }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = "",
+        )
 
-    val defaultCamera: StateFlow<CameraFacing> = _settings.map { it.defaultCamera }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = CameraFacing.FRONT
-    )
+    val defaultCamera: StateFlow<CameraFacing> =
+        _settings.map { it.defaultCamera }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = CameraFacing.FRONT,
+        )
 
     // Error state for settings operations
     private val _error = MutableStateFlow<ChatRtError?>(null)
@@ -68,11 +72,11 @@ class SettingsViewModel(
 
         // Observe settings changes from repository
         viewModelScope.launch {
-            settingsRepository.observeSettings()
+            settingsRepository
+                .observeSettings()
                 .catch { exception ->
                     _error.value = mapExceptionToChatRtError(exception)
-                }
-                .collect { newSettings ->
+                }.collect { newSettings ->
                     _settings.value = newSettings
                 }
         }
@@ -86,7 +90,7 @@ class SettingsViewModel(
             try {
                 _isLoading.value = true
                 val result = settingsRepository.setDefaultVideoMode(mode)
-                
+
                 result.fold(
                     onSuccess = {
                         // Update local state
@@ -96,7 +100,7 @@ class SettingsViewModel(
                     },
                     onFailure = { exception ->
                         _error.value = mapExceptionToChatRtError(exception)
-                    }
+                    },
                 )
             } catch (e: Exception) {
                 _error.value = mapExceptionToChatRtError(e)
@@ -114,7 +118,7 @@ class SettingsViewModel(
             try {
                 _isLoading.value = true
                 val result = settingsRepository.setAudioQuality(quality)
-                
+
                 result.fold(
                     onSuccess = {
                         // Update local state
@@ -124,7 +128,7 @@ class SettingsViewModel(
                     },
                     onFailure = { exception ->
                         _error.value = mapExceptionToChatRtError(exception)
-                    }
+                    },
                 )
             } catch (e: Exception) {
                 _error.value = mapExceptionToChatRtError(e)
@@ -142,7 +146,7 @@ class SettingsViewModel(
             try {
                 _isLoading.value = true
                 val result = settingsRepository.setDefaultCamera(camera)
-                
+
                 result.fold(
                     onSuccess = {
                         // Update local state
@@ -152,7 +156,7 @@ class SettingsViewModel(
                     },
                     onFailure = { exception ->
                         _error.value = mapExceptionToChatRtError(exception)
-                    }
+                    },
                 )
             } catch (e: Exception) {
                 _error.value = mapExceptionToChatRtError(e)
@@ -178,7 +182,7 @@ class SettingsViewModel(
             try {
                 _isLoading.value = true
                 val result = settingsRepository.setDebugLogging(enabled)
-                
+
                 result.fold(
                     onSuccess = {
                         // Update local state
@@ -188,7 +192,7 @@ class SettingsViewModel(
                     },
                     onFailure = { exception ->
                         _error.value = mapExceptionToChatRtError(exception)
-                    }
+                    },
                 )
             } catch (e: Exception) {
                 _error.value = mapExceptionToChatRtError(e)
@@ -205,16 +209,16 @@ class SettingsViewModel(
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                
+
                 // Basic URL validation
                 if (url.isNotBlank() && !isValidUrl(url)) {
                     _error.value = ChatRtError.ApiError(400, "Invalid server URL format")
                     _isLoading.value = false
                     return@launch
                 }
-                
+
                 val result = settingsRepository.setServerUrl(url)
-                
+
                 result.fold(
                     onSuccess = {
                         // Update local state
@@ -224,7 +228,7 @@ class SettingsViewModel(
                     },
                     onFailure = { exception ->
                         _error.value = mapExceptionToChatRtError(exception)
-                    }
+                    },
                 )
             } catch (e: Exception) {
                 _error.value = mapExceptionToChatRtError(e)
@@ -242,7 +246,7 @@ class SettingsViewModel(
             try {
                 _isLoading.value = true
                 val result = settingsRepository.updateSettings(newSettings)
-                
+
                 result.fold(
                     onSuccess = {
                         // Update local state
@@ -252,7 +256,7 @@ class SettingsViewModel(
                     },
                     onFailure = { exception ->
                         _error.value = mapExceptionToChatRtError(exception)
-                    }
+                    },
                 )
             } catch (e: Exception) {
                 _error.value = mapExceptionToChatRtError(e)
@@ -270,7 +274,7 @@ class SettingsViewModel(
             try {
                 _isLoading.value = true
                 val result = settingsRepository.resetToDefaults()
-                
+
                 result.fold(
                     onSuccess = {
                         // The settings will be updated via the observer
@@ -279,7 +283,7 @@ class SettingsViewModel(
                     },
                     onFailure = { exception ->
                         _error.value = mapExceptionToChatRtError(exception)
-                    }
+                    },
                 )
             } catch (e: Exception) {
                 _error.value = mapExceptionToChatRtError(e)
@@ -292,7 +296,10 @@ class SettingsViewModel(
     /**
      * Validates server URL configuration by attempting a test connection
      */
-    fun validateServerUrl(url: String, onResult: (Boolean, String?) -> Unit) {
+    fun validateServerUrl(
+        url: String,
+        onResult: (Boolean, String?) -> Unit,
+    ) {
         viewModelScope.launch {
             try {
                 if (!isValidUrl(url)) {
@@ -303,7 +310,6 @@ class SettingsViewModel(
                 // For now, just validate the format
                 // In a real implementation, you might want to test the connection
                 onResult(true, null)
-                
             } catch (e: Exception) {
                 onResult(false, e.message)
             }
@@ -313,23 +319,17 @@ class SettingsViewModel(
     /**
      * Gets current settings synchronously (for immediate access)
      */
-    fun getCurrentSettings(): AppSettings {
-        return _settings.value
-    }
+    fun getCurrentSettings(): AppSettings = _settings.value
 
     /**
      * Checks if debug logging is currently enabled
      */
-    fun isDebugLoggingEnabled(): Boolean {
-        return _settings.value.debugLogging
-    }
+    fun isDebugLoggingEnabled(): Boolean = _settings.value.debugLogging
 
     /**
      * Gets the current server URL
      */
-    fun getCurrentServerUrl(): String {
-        return _settings.value.serverUrl
-    }
+    fun getCurrentServerUrl(): String = _settings.value.serverUrl
 
     /**
      * Clears the current error state
@@ -375,25 +375,23 @@ class SettingsViewModel(
     /**
      * Basic URL validation
      */
-    private fun isValidUrl(url: String): Boolean {
-        return try {
+    private fun isValidUrl(url: String): Boolean =
+        try {
             url.startsWith("http://") || url.startsWith("https://") || url.startsWith("ws://") || url.startsWith("wss://")
         } catch (e: Exception) {
             false
         }
-    }
 
     /**
      * Maps exceptions to ChatRtError types
      */
-    private fun mapExceptionToChatRtError(exception: Throwable): ChatRtError {
-        return when {
+    private fun mapExceptionToChatRtError(exception: Throwable): ChatRtError =
+        when {
             exception.message?.contains("network", ignoreCase = true) == true ||
-            exception.message?.contains("connection", ignoreCase = true) == true ||
-            exception.message?.contains("host", ignoreCase = true) == true -> ChatRtError.NetworkError
+                exception.message?.contains("connection", ignoreCase = true) == true ||
+                exception.message?.contains("host", ignoreCase = true) == true -> ChatRtError.NetworkError
             exception.message?.contains("permission", ignoreCase = true) == true ||
-            exception.message?.contains("security", ignoreCase = true) == true -> ChatRtError.PermissionDenied
+                exception.message?.contains("security", ignoreCase = true) == true -> ChatRtError.PermissionDenied
             else -> ChatRtError.ApiError(0, exception.message ?: "Unknown error")
         }
-    }
 }

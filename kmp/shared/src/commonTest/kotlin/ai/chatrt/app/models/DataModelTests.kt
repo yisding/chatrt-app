@@ -8,16 +8,16 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class DataModelTests {
-
     private val json = Json { prettyPrint = true }
 
     @Test
     fun testLogEntrySerialization() {
-        val logEntry = LogEntry(
-            timestamp = 1234567890L,
-            message = "Test message",
-            level = LogLevel.INFO
-        )
+        val logEntry =
+            LogEntry(
+                timestamp = 1234567890L,
+                message = "Test message",
+                level = LogLevel.INFO,
+            )
 
         val serialized = json.encodeToString(logEntry)
         val deserialized = json.decodeFromString<LogEntry>(serialized)
@@ -29,23 +29,25 @@ class DataModelTests {
 
     @Test
     fun testLogEntryDefaultLevel() {
-        val logEntry = LogEntry(
-            timestamp = 1234567890L,
-            message = "Test message"
-        )
+        val logEntry =
+            LogEntry(
+                timestamp = 1234567890L,
+                message = "Test message",
+            )
 
         assertEquals(LogLevel.INFO, logEntry.level)
     }
 
     @Test
     fun testAppSettingsSerialization() {
-        val appSettings = AppSettings(
-            defaultVideoMode = VideoMode.WEBCAM,
-            audioQuality = AudioQuality.HIGH,
-            debugLogging = true,
-            serverUrl = "https://example.com",
-            defaultCamera = CameraFacing.BACK
-        )
+        val appSettings =
+            AppSettings(
+                defaultVideoMode = VideoMode.WEBCAM,
+                audioQuality = AudioQuality.HIGH,
+                debugLogging = true,
+                serverUrl = "https://example.com",
+                defaultCamera = CameraFacing.BACK,
+            )
 
         val serialized = json.encodeToString(appSettings)
         val deserialized = json.decodeFromString<AppSettings>(serialized)
@@ -70,17 +72,20 @@ class DataModelTests {
 
     @Test
     fun testSessionConfigSerialization() {
-        val sessionConfig = SessionConfig(
-            type = "realtime",
-            model = "gpt-realtime",
-            instructions = "Test instructions",
-            audio = AudioConfig(
-                input = AudioInputConfig(
-                    noiseReduction = NoiseReductionConfig(type = "near_field")
-                ),
-                output = AudioOutputConfig(voice = "marin")
+        val sessionConfig =
+            SessionConfig(
+                type = "realtime",
+                model = "gpt-realtime",
+                instructions = "Test instructions",
+                audio =
+                    AudioConfig(
+                        input =
+                            AudioInputConfig(
+                                noiseReduction = NoiseReductionConfig(type = "near_field"),
+                            ),
+                        output = AudioOutputConfig(voice = "marin"),
+                    ),
             )
-        )
 
         val serialized = json.encodeToString(sessionConfig)
         val deserialized = json.decodeFromString<SessionConfig>(serialized)
@@ -94,18 +99,22 @@ class DataModelTests {
 
     @Test
     fun testCallRequestSerialization() {
-        val callRequest = CallRequest(
-            sdp = "test-sdp-offer",
-            session = SessionConfig(
-                instructions = "Test instructions",
-                audio = AudioConfig(
-                    input = AudioInputConfig(
-                        noiseReduction = NoiseReductionConfig()
+        val callRequest =
+            CallRequest(
+                sdp = "test-sdp-offer",
+                session =
+                    SessionConfig(
+                        instructions = "Test instructions",
+                        audio =
+                            AudioConfig(
+                                input =
+                                    AudioInputConfig(
+                                        noiseReduction = NoiseReductionConfig(),
+                                    ),
+                                output = AudioOutputConfig(),
+                            ),
                     ),
-                    output = AudioOutputConfig()
-                )
             )
-        )
 
         val serialized = json.encodeToString(callRequest)
         val deserialized = json.decodeFromString<CallRequest>(serialized)
@@ -116,11 +125,12 @@ class DataModelTests {
 
     @Test
     fun testCallResponseSerialization() {
-        val callResponse = CallResponse(
-            callId = "test-call-id",
-            sdpAnswer = "test-sdp-answer",
-            status = "connected"
-        )
+        val callResponse =
+            CallResponse(
+                callId = "test-call-id",
+                sdpAnswer = "test-sdp-answer",
+                status = "connected",
+            )
 
         val serialized = json.encodeToString(callResponse)
         val deserialized = json.decodeFromString<CallResponse>(serialized)
@@ -132,11 +142,12 @@ class DataModelTests {
 
     @Test
     fun testConnectionParamsSerialization() {
-        val connectionParams = ConnectionParams(
-            videoMode = VideoMode.SCREEN_SHARE,
-            audioQuality = AudioQuality.HIGH,
-            cameraFacing = CameraFacing.BACK
-        )
+        val connectionParams =
+            ConnectionParams(
+                videoMode = VideoMode.SCREEN_SHARE,
+                audioQuality = AudioQuality.HIGH,
+                cameraFacing = CameraFacing.BACK,
+            )
 
         val serialized = json.encodeToString(connectionParams)
         val deserialized = json.decodeFromString<ConnectionParams>(serialized)
@@ -148,10 +159,11 @@ class DataModelTests {
 
     @Test
     fun testConnectionParamsDefaults() {
-        val connectionParams = ConnectionParams(
-            videoMode = VideoMode.AUDIO_ONLY,
-            audioQuality = AudioQuality.MEDIUM
-        )
+        val connectionParams =
+            ConnectionParams(
+                videoMode = VideoMode.AUDIO_ONLY,
+                audioQuality = AudioQuality.MEDIUM,
+            )
 
         assertEquals(CameraFacing.FRONT, connectionParams.cameraFacing)
     }

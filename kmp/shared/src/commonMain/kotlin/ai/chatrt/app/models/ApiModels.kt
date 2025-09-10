@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CallRequest(
     val sdp: String,
-    val session: SessionConfig
+    val session: SessionConfig,
 )
 
 /**
@@ -18,7 +18,7 @@ data class CallRequest(
 data class CallResponse(
     val callId: String,
     val sdpAnswer: String,
-    val status: String
+    val status: String,
 )
 
 /**
@@ -28,5 +28,5 @@ data class CallResponse(
 data class ConnectionParams(
     val videoMode: VideoMode,
     val audioQuality: AudioQuality,
-    val cameraFacing: CameraFacing = CameraFacing.FRONT
+    val cameraFacing: CameraFacing = CameraFacing.FRONT,
 )

@@ -1,0 +1,34 @@
+{
+  "enabled": true,
+  "name": "Code Quality Analyzer",
+  "description": "Monitors source code files for changes and analyzes them for potential improvements including code smells, design patterns, and best practices. Provides suggestions for enhancing readability, maintainability, and performance while preserving functionality.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.kt",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.swift",
+      "**/*.java",
+      "**/*.py",
+      "**/*.cpp",
+      "**/*.c",
+      "**/*.h",
+      "**/*.cs",
+      "**/*.go",
+      "**/*.rs",
+      "**/*.php",
+      "**/*.rb",
+      "**/*.scala",
+      "**/*.clj",
+      "**/*.hs"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Analyze the modified code files for potential improvements. Focus on:\n\n1. **Code Smells**: Identify long methods, large classes, duplicate code, complex conditionals, and other maintainability issues\n2. **Design Patterns**: Suggest appropriate design patterns that could improve the code structure\n3. **Best Practices**: Check for adherence to language-specific best practices and conventions\n4. **Performance**: Identify potential performance bottlenecks and optimization opportunities\n5. **Readability**: Suggest improvements for variable naming, code organization, and documentation\n6. **Security**: Flag potential security vulnerabilities or unsafe practices\n7. **Testing**: Recommend areas that need better test coverage or suggest testable refactoring\n\nFor each suggestion:\n- Explain WHY the change would be beneficial\n- Provide a concrete example of the improved code when possible\n- Prioritize suggestions by impact (High/Medium/Low)\n- Ensure suggestions maintain existing functionality\n\nPresent findings in a clear, actionable format that developers can easily understand and implement."
+  }
+}

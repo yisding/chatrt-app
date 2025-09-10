@@ -21,54 +21,55 @@ import kotlin.math.pow
  */
 class ChatRtApiService(
     private val baseUrl: String,
-    private val httpClient: HttpClient = createDefaultHttpClient()
+    private val httpClient: HttpClient = createDefaultHttpClient(),
 ) {
-    
     companion object {
         private const val DEFAULT_TIMEOUT_MS = 30_000L
         private const val MAX_RETRY_ATTEMPTS = 3
         private const val INITIAL_RETRY_DELAY_MS = 1000L
         private const val MAX_RETRY_DELAY_MS = 10_000L
-        
+
         /**
          * Creates a default HTTP client with common configuration
          */
-        fun createDefaultHttpClient(): HttpClient {
-            return HttpClient {
+        fun createDefaultHttpClient(): HttpClient =
+            HttpClient {
                 install(ContentNegotiation) {
-                    json(Json {
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                        encodeDefaults = true
-                    })
+                    json(
+                        Json {
+                            ignoreUnknownKeys = true
+                            isLenient = true
+                            encodeDefaults = true
+                        },
+                    )
                 }
-                
+
                 install(HttpTimeout) {
                     requestTimeoutMillis = DEFAULT_TIMEOUT_MS
                     connectTimeoutMillis = DEFAULT_TIMEOUT_MS
                     socketTimeoutMillis = DEFAULT_TIMEOUT_MS
                 }
-                
+
                 install(DefaultRequest) {
                     header(HttpHeaders.ContentType, ContentType.Application.Json)
                     header(HttpHeaders.Accept, ContentType.Application.Json)
                 }
             }
-        }
     }
-    
+
     /**
      * Creates a new call with the ChatRT backend
      * @param callRequest The call request containing SDP offer and session config
      * @return Result containing the call response or error
      */
-    suspend fun createCall(callRequest: CallRequest): Result<CallResponse> {
-        return executeWithRetry {
+    suspend fun createCall(callRequest: CallRequest): Result<CallResponse> =
+        executeWithRetry {
             try {
-                val response = httpClient.post("$baseUrl/rtc") {
-                    setBody(callRequest)
-                }
-                
+                val response =
+                    httpClient.post("$baseUrl/rtc") {
+                        setBody(callRequest)
+                    }
+
                 when (response.status) {
                     HttpStatusCode.OK -> {
                         val callResponse: CallResponse = response.body()
@@ -104,18 +105,17 @@ class ChatRtApiService(
                 }
             }
         }
-    }
-    
+
     /**
      * Starts monitoring a call by establishing observer connection
      * @param callId The ID of the call to monitor
      * @return Result indicating success or failure
      */
-    suspend fun startCallMonitoring(callId: String): Result<Unit> {
-        return executeWithRetry {
+    suspend fun startCallMonitoring(callId: String): Result<Unit> =
+        executeWithRetry {
             try {
                 val response = httpClient.post("$baseUrl/observer/$callId")
-                
+
                 when (response.status) {
                     HttpStatusCode.OK -> {
                         Result.success(Unit)
@@ -147,68 +147,64 @@ class ChatRtApiService(
                 }
             }
         }
-    }
-    
+
     /**
      * Checks the health of the ChatRT backend
      * @return Result indicating if the service is healthy
      */
-    suspend fun checkHealth(): Result<Boolean> {
-        return try {
+    suspend fun checkHealth(): Result<Boolean> =
+        try {
             val response = httpClient.get("$baseUrl/health")
             Result.success(response.status == HttpStatusCode.OK)
         } catch (e: Exception) {
             Result.failure(ChatRtError.NetworkError)
         }
-    }
-    
+
     /**
      * Executes a network operation with exponential backoff retry logic
      * @param operation The operation to execute
      * @return Result of the operation after retries
      */
-    private suspend fun <T> executeWithRetry(
-        operation: suspend () -> Result<T>
-    ): Result<T> {
+    private suspend fun <T> executeWithRetry(operation: suspend () -> Result<T>): Result<T> {
         var lastException: Throwable? = null
-        
+
         repeat(MAX_RETRY_ATTEMPTS) { attempt ->
             try {
                 val result = operation()
-                
+
                 // If successful or non-retryable error, return immediately
                 if (result.isSuccess || !isRetryableError(result.exceptionOrNull())) {
                     return result
                 }
-                
+
                 lastException = result.exceptionOrNull()
             } catch (e: Exception) {
                 lastException = e
-                
+
                 // Don't retry for non-retryable exceptions
                 if (!isRetryableError(e)) {
                     return Result.failure(e)
                 }
             }
-            
+
             // Don't delay after the last attempt
             if (attempt < MAX_RETRY_ATTEMPTS - 1) {
                 val delayMs = calculateRetryDelay(attempt)
                 delay(delayMs)
             }
         }
-        
+
         // All retries failed, return the last exception
         return Result.failure(lastException ?: ChatRtError.NetworkError)
     }
-    
+
     /**
      * Determines if an error is retryable
      * @param throwable The error to check
      * @return true if the error should be retried
      */
-    private fun isRetryableError(throwable: Throwable?): Boolean {
-        return when (throwable) {
+    private fun isRetryableError(throwable: Throwable?): Boolean =
+        when (throwable) {
             is ChatRtError.NetworkError -> true
             is HttpRequestTimeoutException -> true
             is ServerResponseException -> {
@@ -221,8 +217,7 @@ class ChatRtApiService(
             }
             else -> false
         }
-    }
-    
+
     /**
      * Calculates the delay for retry attempts using exponential backoff
      * @param attempt The current attempt number (0-based)
@@ -232,7 +227,7 @@ class ChatRtApiService(
         val exponentialDelay = INITIAL_RETRY_DELAY_MS * (2.0.pow(attempt)).toLong()
         return min(exponentialDelay, MAX_RETRY_DELAY_MS)
     }
-    
+
     /**
      * Closes the HTTP client and releases resources
      */

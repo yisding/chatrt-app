@@ -11,67 +11,67 @@ interface AudioManager {
      * Initialize audio system
      */
     suspend fun initialize()
-    
+
     /**
      * Setup audio routing for WebRTC calls
      */
     suspend fun setupAudioRouting()
-    
+
     /**
      * Set audio mode (normal, call, etc.)
      */
     suspend fun setAudioMode(mode: AudioMode)
-    
+
     /**
      * Handle audio focus changes
      */
     suspend fun requestAudioFocus(): Boolean
-    
+
     /**
      * Release audio focus
      */
     suspend fun releaseAudioFocus()
-    
+
     /**
      * Handle headset connection/disconnection
      */
     suspend fun handleHeadsetConnection(connected: Boolean)
-    
+
     /**
      * Get available audio devices
      */
     suspend fun getAvailableAudioDevices(): List<AudioDevice>
-    
+
     /**
      * Set active audio device
      */
     suspend fun setAudioDevice(device: AudioDevice)
-    
+
     /**
      * Get current audio device
      */
     suspend fun getCurrentAudioDevice(): AudioDevice?
-    
+
     /**
      * Observe audio device changes
      */
     fun observeAudioDeviceChanges(): Flow<AudioDevice>
-    
+
     /**
      * Set audio quality settings
      */
     suspend fun setAudioQuality(quality: AudioQuality)
-    
+
     /**
      * Enable/disable noise suppression
      */
     suspend fun setNoiseSuppression(enabled: Boolean)
-    
+
     /**
      * Enable/disable echo cancellation
      */
     suspend fun setEchoCancellation(enabled: Boolean)
-    
+
     /**
      * Cleanup audio resources
      */
@@ -85,7 +85,7 @@ enum class AudioMode {
     NORMAL,
     CALL,
     COMMUNICATION,
-    RINGTONE
+    RINGTONE,
 }
 
 /**
@@ -95,7 +95,7 @@ data class AudioDevice(
     val id: String,
     val name: String,
     val type: AudioDeviceType,
-    val isDefault: Boolean = false
+    val isDefault: Boolean = false,
 )
 
 /**
@@ -107,7 +107,7 @@ enum class AudioDeviceType {
     WIRED_HEADSET,
     BLUETOOTH_HEADSET,
     USB_HEADSET,
-    UNKNOWN
+    UNKNOWN,
 }
 
 /**

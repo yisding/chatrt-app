@@ -11,58 +11,60 @@ import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-
 import org.koin.dsl.module
 
 /**
  * Shared Koin module for repositories and ViewModels
  * Contains dependencies that are common across all platforms
  */
-val sharedModule = module {
-    
-    // HTTP Client configuration
-    single<HttpClient> {
-        HttpClient {
-            install(ContentNegotiation) {
-                json(Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                })
+val sharedModule =
+    module {
+
+        // HTTP Client configuration
+        single<HttpClient> {
+            HttpClient {
+                install(ContentNegotiation) {
+                    json(
+                        Json {
+                            prettyPrint = true
+                            isLenient = true
+                            ignoreUnknownKeys = true
+                        },
+                    )
+                }
             }
         }
+
+        // API Service
+        single<ChatRtApiService> {
+            ChatRtApiService(
+                baseUrl = "https://chatrt.val.town", // Default ChatRT backend URL
+                httpClient = get(),
+            )
+        }
+
+        // Repositories
+        single<ChatRepository> {
+            ChatRepositoryImpl(
+                webRtcManager = get(),
+                apiService = get(),
+            )
+        }
+
+        single<SettingsRepository> {
+            SettingsRepositoryImpl()
+        }
+
+        // ViewModels
+        factory<MainViewModel> {
+            MainViewModel(
+                chatRepository = get(),
+            )
+        }
+
+        factory<SettingsViewModel> {
+            SettingsViewModel(
+                settingsRepository = get(),
+            )
+        }
     }
-    
-    // API Service
-    single<ChatRtApiService> {
-        ChatRtApiService(
-            baseUrl = "https://chatrt.val.town", // Default ChatRT backend URL
-            httpClient = get()
-        )
-    }
-    
-    // Repositories
-    single<ChatRepository> {
-        ChatRepositoryImpl(
-            webRtcManager = get(),
-            apiService = get()
-        )
-    }
-    
-    single<SettingsRepository> {
-        SettingsRepositoryImpl()
-    }
-    
-    // ViewModels
-    factory<MainViewModel> {
-        MainViewModel(
-            chatRepository = get()
-        )
-    }
-    
-    factory<SettingsViewModel> {
-        SettingsViewModel(
-            settingsRepository = get()
-        )
-    }
-}

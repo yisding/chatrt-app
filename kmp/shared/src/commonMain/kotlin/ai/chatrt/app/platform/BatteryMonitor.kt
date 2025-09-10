@@ -12,62 +12,62 @@ interface BatteryMonitor {
      * Initialize battery monitoring
      */
     suspend fun initialize()
-    
+
     /**
      * Start monitoring battery changes
      */
     suspend fun startMonitoring()
-    
+
     /**
      * Stop monitoring battery changes
      */
     suspend fun stopMonitoring()
-    
+
     /**
      * Get current battery level (0-100)
      */
     suspend fun getCurrentBatteryLevel(): Int
-    
+
     /**
      * Check if battery is currently low
      */
     suspend fun isBatteryLow(): Boolean
-    
+
     /**
      * Check if device is currently charging
      */
     suspend fun isCharging(): Boolean
-    
+
     /**
      * Get current battery state
      */
     suspend fun getBatteryState(): BatteryState
-    
+
     /**
      * Observe battery state changes
      */
     fun observeBatteryState(): Flow<BatteryState>
-    
+
     /**
      * Get power saving recommendation based on current state
      */
     suspend fun getPowerSavingRecommendation(): PowerSavingRecommendation?
-    
+
     /**
      * Apply power saving mode
      */
     suspend fun applyPowerSavingMode(mode: PowerSavingMode)
-    
+
     /**
      * Check if power saving mode is active
      */
     suspend fun isPowerSavingModeActive(): Boolean
-    
+
     /**
      * Request battery optimization exemption (Android)
      */
     suspend fun requestBatteryOptimizationExemption(): Boolean
-    
+
     /**
      * Cleanup battery monitoring resources
      */
@@ -78,13 +78,13 @@ interface BatteryMonitor {
  * Battery state information
  */
 data class BatteryState(
-    val level: Int,              // 0-100
+    val level: Int, // 0-100
     val isCharging: Boolean,
     val chargingType: ChargingType,
-    val temperature: Float,      // Celsius
-    val voltage: Float,          // Volts
+    val temperature: Float, // Celsius
+    val voltage: Float, // Volts
     val health: BatteryHealth,
-    val powerSavingMode: PowerSavingMode
+    val powerSavingMode: PowerSavingMode,
 )
 
 /**
@@ -95,7 +95,7 @@ enum class ChargingType {
     AC,
     USB,
     WIRELESS,
-    UNKNOWN
+    UNKNOWN,
 }
 
 /**
@@ -107,7 +107,7 @@ enum class BatteryHealth {
     DEAD,
     OVER_VOLTAGE,
     COLD,
-    UNKNOWN
+    UNKNOWN,
 }
 
 /**

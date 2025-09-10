@@ -10,7 +10,7 @@ data class SessionConfig(
     val type: String = "realtime",
     val model: String = "gpt-realtime",
     val instructions: String,
-    val audio: AudioConfig
+    val audio: AudioConfig,
 )
 
 /**
@@ -19,7 +19,7 @@ data class SessionConfig(
 @Serializable
 data class AudioConfig(
     val input: AudioInputConfig,
-    val output: AudioOutputConfig
+    val output: AudioOutputConfig,
 )
 
 /**
@@ -27,7 +27,7 @@ data class AudioConfig(
  */
 @Serializable
 data class AudioInputConfig(
-    val noiseReduction: NoiseReductionConfig
+    val noiseReduction: NoiseReductionConfig,
 )
 
 /**
@@ -35,7 +35,7 @@ data class AudioInputConfig(
  */
 @Serializable
 data class NoiseReductionConfig(
-    val type: String = "near_field"
+    val type: String = "near_field",
 )
 
 /**
@@ -43,5 +43,5 @@ data class NoiseReductionConfig(
  */
 @Serializable
 data class AudioOutputConfig(
-    val voice: String = "marin"
+    val voice: String = "marin",
 )

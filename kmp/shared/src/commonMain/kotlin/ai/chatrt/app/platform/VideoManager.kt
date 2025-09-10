@@ -11,62 +11,62 @@ interface VideoManager {
      * Initialize video system
      */
     suspend fun initialize()
-    
+
     /**
      * Create camera stream for video calls
      */
     suspend fun createCameraStream(facing: CameraFacing = CameraFacing.FRONT): VideoStream?
-    
+
     /**
      * Stop camera capture
      */
     suspend fun stopCameraCapture()
-    
+
     /**
      * Switch between front and back cameras
      */
     suspend fun switchCamera(): CameraFacing?
-    
+
     /**
      * Check if front camera is available
      */
     suspend fun isFrontCameraAvailable(): Boolean
-    
+
     /**
      * Check if back camera is available
      */
     suspend fun isBackCameraAvailable(): Boolean
-    
+
     /**
      * Get available camera devices
      */
     suspend fun getAvailableCameras(): List<CameraDevice>
-    
+
     /**
      * Set camera resolution
      */
     suspend fun setCameraResolution(resolution: Resolution)
-    
+
     /**
      * Set camera frame rate
      */
     suspend fun setCameraFrameRate(frameRate: Int)
-    
+
     /**
      * Enable/disable camera flash
      */
     suspend fun setCameraFlash(enabled: Boolean)
-    
+
     /**
      * Observe camera state changes
      */
     fun observeCameraState(): Flow<CameraState>
-    
+
     /**
      * Get current camera capabilities
      */
     suspend fun getCameraCapabilities(): CameraCapabilities?
-    
+
     /**
      * Cleanup video resources
      */
@@ -79,7 +79,7 @@ interface VideoManager {
 enum class CameraFacing {
     FRONT,
     BACK,
-    EXTERNAL
+    EXTERNAL,
 }
 
 /**
@@ -89,10 +89,13 @@ interface VideoStream {
     val id: String
     val resolution: Resolution
     val frameRate: Int
-    
+
     suspend fun start()
+
     suspend fun stop()
+
     suspend fun pause()
+
     suspend fun resume()
 }
 
@@ -104,7 +107,7 @@ data class CameraDevice(
     val name: String,
     val facing: CameraFacing,
     val supportedResolutions: List<Resolution>,
-    val supportedFrameRates: List<Int>
+    val supportedFrameRates: List<Int>,
 )
 
 /**
@@ -116,7 +119,7 @@ enum class CameraState {
     OPENED,
     CAPTURING,
     CLOSED,
-    ERROR
+    ERROR,
 }
 
 /**
@@ -128,7 +131,7 @@ data class CameraCapabilities(
     val hasFlash: Boolean,
     val hasAutoFocus: Boolean,
     val maxZoom: Float,
-    val supportedFocusModes: List<FocusMode>
+    val supportedFocusModes: List<FocusMode>,
 )
 
 /**
@@ -139,7 +142,7 @@ enum class FocusMode {
     CONTINUOUS_VIDEO,
     CONTINUOUS_PICTURE,
     MANUAL,
-    FIXED
+    FIXED,
 }
 
 /**

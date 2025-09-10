@@ -10,11 +10,11 @@ import org.koin.dsl.KoinAppDeclaration
  */
 fun initKoin(
     platformModules: List<Module> = emptyList(),
-    appDeclaration: KoinAppDeclaration = {}
+    appDeclaration: KoinAppDeclaration = {},
 ) = startKoin {
     appDeclaration()
     modules(
-        listOf(sharedModule) + platformModules
+        listOf(sharedModule) + platformModules,
     )
 }
 

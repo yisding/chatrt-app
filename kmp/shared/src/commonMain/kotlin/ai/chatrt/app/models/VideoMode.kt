@@ -6,5 +6,5 @@ package ai.chatrt.app.models
 enum class VideoMode {
     AUDIO_ONLY,
     WEBCAM,
-    SCREEN_SHARE
+    SCREEN_SHARE,
 }

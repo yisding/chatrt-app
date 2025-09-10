@@ -1,0 +1,21 @@
+{
+  "enabled": true,
+  "name": "Code Linting Hook",
+  "description": "Automatically runs appropriate linters (ktlint for Kotlin, eslint for TypeScript/JavaScript, etc.) when source code files are modified to ensure code quality and consistency.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.kt",
+      "**/*.kts",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Source code files have been modified. Please run the appropriate linter for the changed files:\n\n- For Kotlin files (.kt, .kts): Run ktlint to check formatting and style\n- For TypeScript/JavaScript files (.ts, .tsx, .js, .jsx): Run eslint or deno lint to check code quality\n\nAnalyze the file extensions of the changed files and execute the corresponding linter. Report any linting issues found and suggest fixes if needed."
+  }
+}
