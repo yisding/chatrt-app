@@ -1,5 +1,8 @@
 package ai.chatrt.app
 
+import ai.chatrt.app.ui.theme.ChatRtTheme
+import ai.chatrt.app.ui.components.MinimalConnectionStatusIndicator
+import ai.chatrt.app.models.*
 import ai.chatrt.app.viewmodel.MainViewModel
 import ai.chatrt.app.viewmodel.SettingsViewModel
 import androidx.compose.foundation.background
@@ -14,7 +17,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
+    ChatRtTheme {
         // For now, show a simple demo screen that demonstrates Koin integration
         // This will be replaced with the actual MainScreen in task 9
         DemoScreen()
@@ -41,7 +44,7 @@ fun DemoScreen() {
         Spacer(modifier = Modifier.height(16.dp))
         
         Text(
-            text = "Koin Dependency Injection Setup Complete",
+            text = "Material 3 Expressive Theme & UI Components Ready",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -49,7 +52,7 @@ fun DemoScreen() {
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "Ready for UI implementation in task 8",
+            text = "Task 8 Complete - Ready for MainScreen implementation in task 9",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

@@ -64,6 +64,7 @@
   - _Requirements: 1.1_
 
 - [ ] 8. Build shared UI components with Compose Multiplatform and Material 3 Expressive
+
   - Upgrade to Compose Multiplatform 1.9.0-rc1.
   - Set up Material 3 Expressive theme with custom color scheme, typography, and motion system
   - Create ConnectionStatusIndicator composable with Material 3 Expressive design and connection state animations
@@ -77,6 +78,7 @@
   - _Requirements: 1.1, 1.6, 2.1, 2.3, 2.5, 3.1, 3.3, 4.1, 4.2, 4.4_
 
 - [ ] 9. Build main screen UI with ChatRT functionality
+
   - Replace demo App.kt with MainScreen composable using Material 3 Expressive theme
   - Integrate MainViewModel with connection controls and status display using Material 3 Expressive components
   - Add video preview area with Material 3 Expressive layout and proper aspect ratio management
