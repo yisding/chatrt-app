@@ -86,3 +86,52 @@ data class PowerSavingRecommendation(
     val reason: String,
     val estimatedBatteryGain: String,
 )
+
+/**
+ * Audio device information
+ */
+@Serializable
+data class AudioDevice(
+    val id: String,
+    val name: String,
+    val type: AudioDeviceType,
+    val isDefault: Boolean = false,
+)
+
+/**
+ * Types of audio devices
+ */
+@Serializable
+enum class AudioDeviceType {
+    SPEAKER,
+    EARPIECE,
+    WIRED_HEADSET,
+    WIRED_HEADPHONES,
+    BLUETOOTH_HEADSET,
+    USB_HEADSET,
+    UNKNOWN,
+}
+
+/**
+ * Audio device information for diagnostics
+ */
+@Serializable
+data class AudioDeviceInfo(
+    val currentDevice: AudioDevice?,
+    val availableDevices: List<AudioDevice>,
+    val isBluetoothScoOn: Boolean = false,
+    val isSpeakerphoneOn: Boolean = false,
+    val isWiredHeadsetOn: Boolean = false,
+    val audioMode: Int = 0,
+)
+
+/**
+ * Audio modes for different scenarios
+ */
+@Serializable
+enum class AudioMode {
+    NORMAL,
+    CALL,
+    COMMUNICATION,
+    RINGTONE,
+}

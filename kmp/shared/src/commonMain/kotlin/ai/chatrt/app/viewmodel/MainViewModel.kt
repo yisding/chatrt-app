@@ -1,7 +1,10 @@
 package ai.chatrt.app.viewmodel
 
 import ai.chatrt.app.models.*
+import ai.chatrt.app.platform.*
 import ai.chatrt.app.repository.ChatRepository
+import ai.chatrt.app.utils.ErrorHandler
+import ai.chatrt.app.utils.ErrorRecoveryManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
@@ -10,10 +13,14 @@ import kotlinx.datetime.Clock
 
 /**
  * Main ViewModel for ChatRT application
- * Manages connection state, video mode, and logging functionality
+ * Manages connection state, video mode, and logging functionality with comprehensive error handling
+ * Requirements: 1.6, 2.6, 3.5, 4.3, 5.3
  */
 class MainViewModel(
     private val chatRepository: ChatRepository,
+    private val audioManager: AudioManager? = null,
+    private val permissionManager: PermissionManager? = null,
+    private val networkMonitor: NetworkMonitor? = null,
 ) : ViewModel() {
     // Connection state management
     private val _connectionState = MutableStateFlow(ConnectionState.DISCONNECTED)
@@ -39,12 +46,26 @@ class MainViewModel(
     private val _isCallPaused = MutableStateFlow(false)
     val isCallPaused: StateFlow<Boolean> = _isCallPaused.asStateFlow()
 
+    // Error handling system
+    private val errorHandler = ErrorHandler()
+    private val errorRecoveryManager =
+        ErrorRecoveryManager(
+            errorHandler = errorHandler,
+            audioManager = audioManager,
+            permissionManager = permissionManager,
+            networkMonitor = networkMonitor,
+        )
+
     // Error state management
-    private val _error = MutableStateFlow<ChatRtError?>(null)
-    val error: StateFlow<ChatRtError?> = _error.asStateFlow()
+    val error: StateFlow<ChatRtError?> = errorHandler.currentError
+    val errorHistory: StateFlow<List<ai.chatrt.app.utils.ErrorHistoryEntry>> = errorHandler.errorHistory
 
     // Current call ID for monitoring
     private var currentCallId: String? = null
+
+    // Audio device monitoring
+    private val _currentAudioDevice = MutableStateFlow<AudioDevice?>(null)
+    val currentAudioDevice: StateFlow<AudioDevice?> = _currentAudioDevice.asStateFlow()
 
     init {
         // Observe connection state changes from repository
@@ -64,6 +85,37 @@ class MainViewModel(
                 .collect { newLogs ->
                     _logs.value = newLogs
                 }
+        }
+
+        // Observe audio device changes
+        audioManager?.let { manager ->
+            viewModelScope.launch {
+                manager
+                    .observeAudioDeviceChanges()
+                    .collect { device ->
+                        _currentAudioDevice.value = device
+                        handleAudioDeviceChange(device)
+                    }
+            }
+        }
+
+        // Observe network changes
+        networkMonitor?.let { monitor ->
+            viewModelScope.launch {
+                monitor
+                    .observeNetworkState()
+                    .collect { networkState ->
+                        handleNetworkStateChange(networkState)
+                    }
+            }
+            // Observe network quality separately
+            viewModelScope.launch {
+                monitor
+                    .observeNetworkQuality()
+                    .collect { quality ->
+                        handleNetworkQualityChange(quality)
+                    }
+            }
         }
     }
 
@@ -95,15 +147,21 @@ class MainViewModel(
                     },
                     onFailure = { exception ->
                         _connectionState.value = ConnectionState.FAILED
-                        val error = mapExceptionToChatRtError(exception)
-                        _error.value = error
+                        val error = errorHandler.mapExceptionToChatRtError(exception, "Connection")
+                        handleErrorWithRecovery(error, "Connection") {
+                            // Retry connection
+                            startConnection()
+                        }
                         addLog("Failed to create call: ${exception.message}", LogLevel.ERROR)
                     },
                 )
             } catch (e: Exception) {
                 _connectionState.value = ConnectionState.FAILED
-                val error = mapExceptionToChatRtError(e)
-                _error.value = error
+                val error = errorHandler.mapExceptionToChatRtError(e, "Connection")
+                handleErrorWithRecovery(error, "Connection") {
+                    // Retry connection
+                    startConnection()
+                }
                 addLog("Unexpected error during connection: ${e.message}", LogLevel.ERROR)
             }
         }
@@ -126,14 +184,14 @@ class MainViewModel(
                         addLog("Connection stopped successfully", LogLevel.INFO)
                     },
                     onFailure = { exception ->
-                        val error = mapExceptionToChatRtError(exception)
-                        _error.value = error
+                        val error = errorHandler.mapExceptionToChatRtError(exception, "Disconnection")
+                        errorHandler.handleError(error, "Disconnection")
                         addLog("Error stopping connection: ${exception.message}", LogLevel.ERROR)
                     },
                 )
             } catch (e: Exception) {
-                val error = mapExceptionToChatRtError(e)
-                _error.value = error
+                val error = errorHandler.mapExceptionToChatRtError(e, "Disconnection")
+                errorHandler.handleError(error, "Disconnection")
                 addLog("Unexpected error stopping connection: ${e.message}", LogLevel.ERROR)
             }
         }
@@ -292,7 +350,223 @@ class MainViewModel(
      * Clears the current error state
      */
     fun clearError() {
-        _error.value = null
+        errorHandler.clearCurrentError()
+    }
+
+    /**
+     * Retries the current error if possible
+     * Requirement: 4.3 - Error handling with retry mechanisms
+     */
+    fun retryCurrentError() {
+        val currentError = error.value
+        if (currentError != null) {
+            val canRetry =
+                errorHandler.retryCurrentError {
+                    // Determine what to retry based on error type
+                    when (currentError) {
+                        is ChatRtError.NetworkError, is ChatRtError.WebRtcError, is ChatRtError.ApiError -> {
+                            startConnection()
+                        }
+                        else -> {
+                            // Other error types handled by recovery manager
+                        }
+                    }
+                }
+
+            if (!canRetry) {
+                addLog("Maximum retry attempts reached for ${currentError.errorCode}", LogLevel.WARNING)
+            }
+        }
+    }
+
+    /**
+     * Handles errors with automatic recovery attempts
+     * Requirements: 1.6, 2.6, 3.5, 4.3, 5.3
+     */
+    private fun handleErrorWithRecovery(
+        error: ChatRtError,
+        context: String,
+        onRetry: (() -> Unit)? = null,
+    ) {
+        errorHandler.handleError(error, context, onRetry)
+
+        // Attempt automatic recovery
+        viewModelScope.launch {
+            errorRecoveryManager.attemptRecovery(
+                error = error,
+                context = context,
+                onRecoverySuccess = {
+                    addLog("Automatic recovery successful for ${error.errorCode}", LogLevel.INFO)
+                    onRetry?.invoke()
+                },
+                onRecoveryFailed = { recoveryError ->
+                    addLog("Automatic recovery failed for ${error.errorCode}: ${recoveryError.userMessage}", LogLevel.WARNING)
+                },
+            )
+        }
+    }
+
+    /**
+     * Handles audio device changes with automatic routing
+     * Requirement: 5.3 - Device state changes with appropriate UI feedback
+     */
+    private fun handleAudioDeviceChange(device: AudioDevice) {
+        val deviceStateChange =
+            when (device.type) {
+                AudioDeviceType.WIRED_HEADSET, AudioDeviceType.WIRED_HEADPHONES -> DeviceStateChange.HEADPHONES_CONNECTED
+                AudioDeviceType.BLUETOOTH_HEADSET -> DeviceStateChange.BLUETOOTH_CONNECTED
+                AudioDeviceType.SPEAKER, AudioDeviceType.EARPIECE -> {
+                    // Determine if this is a disconnection based on previous device
+                    val previousDevice = _currentAudioDevice.value
+                    when (previousDevice?.type) {
+                        AudioDeviceType.WIRED_HEADSET, AudioDeviceType.WIRED_HEADPHONES -> DeviceStateChange.HEADPHONES_DISCONNECTED
+                        AudioDeviceType.BLUETOOTH_HEADSET -> DeviceStateChange.BLUETOOTH_DISCONNECTED
+                        else -> null
+                    }
+                }
+                else -> null
+            }
+
+        deviceStateChange?.let { change ->
+            val deviceError = ChatRtError.DeviceStateError(change, "Audio device changed to ${device.name}")
+            handleErrorWithRecovery(deviceError, "Audio Device Change")
+        }
+
+        addLog("Audio device changed to: ${device.name} (${device.type})", LogLevel.INFO)
+    }
+
+    /**
+     * Handles network state changes
+     */
+    private fun handleNetworkStateChange(networkState: ai.chatrt.app.platform.NetworkState) {
+        if (!networkState.isConnected && _connectionState.value == ConnectionState.CONNECTED) {
+            val networkError = ChatRtError.NetworkError(NetworkErrorCause.NO_INTERNET, "Network connection lost")
+            handleErrorWithRecovery(networkError, "Network") {
+                // Attempt to reconnect when network is restored
+                if (networkState.isConnected) {
+                    startConnection()
+                }
+            }
+            _connectionState.value = ConnectionState.RECONNECTING
+            addLog("Network connection lost, attempting to reconnect", LogLevel.WARNING)
+        } else if (networkState.isConnected && _connectionState.value == ConnectionState.RECONNECTING) {
+            addLog("Network connection restored", LogLevel.INFO)
+            // Connection will be restored by the recovery mechanism
+        }
+    }
+
+    /**
+     * Handles permission errors with automatic fallbacks
+     * Requirements: 1.2, 2.6, 3.6 - Permission handling with fallback options
+     */
+    fun handlePermissionError(
+        permission: PermissionType,
+        isPermanentlyDenied: Boolean = false,
+    ) {
+        errorHandler.handlePermissionError(
+            permission = permission,
+            isPermanentlyDenied = isPermanentlyDenied,
+            onFallback = {
+                when (permission) {
+                    PermissionType.CAMERA -> {
+                        // Automatic fallback to audio-only mode (Requirement 2.6)
+                        setVideoMode(VideoMode.AUDIO_ONLY)
+                        addLog("Switched to audio-only mode due to camera permission denial", LogLevel.INFO)
+                    }
+                    PermissionType.SCREEN_CAPTURE -> {
+                        // Automatic fallback to camera mode (Requirement 3.6)
+                        setVideoMode(VideoMode.WEBCAM)
+                        addLog("Switched to camera mode due to screen capture permission denial", LogLevel.INFO)
+                    }
+                    else -> {
+                        // Handle other permission types
+                    }
+                }
+            },
+        )
+    }
+
+    /**
+     * Handles camera errors with fallback to audio-only
+     * Requirement: 2.6 - Camera permission denied with fallback to audio-only
+     */
+    fun handleCameraError(
+        cause: CameraErrorCause,
+        cameraId: String? = null,
+    ) {
+        errorHandler.handleCameraError(
+            cause = cause,
+            cameraId = cameraId,
+            onFallbackToAudio = {
+                setVideoMode(VideoMode.AUDIO_ONLY)
+                addLog("Switched to audio-only mode due to camera error", LogLevel.INFO)
+            },
+        )
+    }
+
+    /**
+     * Handles screen capture errors with fallback to camera mode
+     * Requirement: 3.6 - Screen sharing permission denied with alternative modes
+     */
+    fun handleScreenCaptureError(
+        cause: ScreenCaptureErrorCause,
+        details: String? = null,
+    ) {
+        errorHandler.handleScreenCaptureError(
+            cause = cause,
+            details = details,
+            onFallbackToCamera = {
+                setVideoMode(VideoMode.WEBCAM)
+                addLog("Switched to camera mode due to screen capture error", LogLevel.INFO)
+            },
+        )
+    }
+
+    /**
+     * Handles phone call interruptions
+     * Requirement: 5.2 - Phone call interruption handling
+     */
+    fun handlePhoneCallInterruption(callState: PhoneCallState) {
+        errorHandler.handlePhoneCallInterruption(
+            callState = callState,
+            onPause = {
+                _isCallPaused.value = true
+                addLog("ChatRT call paused due to phone call", LogLevel.INFO)
+            },
+            onResume = {
+                _isCallPaused.value = false
+                addLog("ChatRT call resumed after phone call", LogLevel.INFO)
+            },
+        )
+    }
+
+    /**
+     * Gets recovery suggestions for the current error
+     */
+    fun getRecoverySuggestions(): List<ai.chatrt.app.utils.RecoverySuggestion> {
+        val currentError = error.value
+        return if (currentError != null) {
+            errorRecoveryManager
+                .getGuidedRecoverySteps(currentError)
+                .map { step ->
+                    ai.chatrt.app.utils.RecoverySuggestion(
+                        message = step.description,
+                        type =
+                            when (step.type) {
+                                ai.chatrt.app.utils.RecoveryStepType.RETRY -> ai.chatrt.app.utils.RecoverySuggestionType.RETRY
+                                ai.chatrt.app.utils.RecoveryStepType.CHECK_SETTINGS,
+                                ai.chatrt.app.utils.RecoveryStepType.NAVIGATE_TO_SETTINGS,
+                                -> ai.chatrt.app.utils.RecoverySuggestionType.SETTINGS
+                                ai.chatrt.app.utils.RecoveryStepType.SWITCH_DEVICE,
+                                ai.chatrt.app.utils.RecoveryStepType.FALLBACK_MODE,
+                                -> ai.chatrt.app.utils.RecoverySuggestionType.ACTION
+                                else -> ai.chatrt.app.utils.RecoverySuggestionType.USER_ACTION
+                            },
+                    )
+                }
+        } else {
+            emptyList()
+        }
     }
 
     /**
@@ -352,8 +626,8 @@ class MainViewModel(
                 addLog("Connection monitoring started for call: $callId", LogLevel.INFO)
             },
             onFailure = { exception ->
-                val error = mapExceptionToChatRtError(exception)
-                _error.value = error
+                val error = errorHandler.mapExceptionToChatRtError(exception, "Connection Monitoring")
+                errorHandler.handleError(error, "Connection Monitoring")
                 addLog("Failed to start connection monitoring: ${exception.message}", LogLevel.ERROR)
             },
         )
@@ -390,25 +664,20 @@ class MainViewModel(
         addLog("Suggesting power optimization due to low battery", LogLevel.WARNING)
     }
 
-    /**
-     * Maps exceptions to ChatRtError types
-     */
-    private fun mapExceptionToChatRtError(exception: Throwable): ChatRtError =
-        when {
-            exception.message?.contains("network", ignoreCase = true) == true ||
-                exception.message?.contains("connection", ignoreCase = true) == true ||
-                exception.message?.contains("host", ignoreCase = true) == true -> ChatRtError.NetworkError
-            exception.message?.contains("permission", ignoreCase = true) == true ||
-                exception.message?.contains("security", ignoreCase = true) == true -> ChatRtError.PermissionDenied
-            else -> ChatRtError.ApiError(0, exception.message ?: "Unknown error")
-        }
-
     override fun onCleared() {
         super.onCleared()
         // Clean up any resources
         viewModelScope.launch {
             if (_connectionState.value == ConnectionState.CONNECTED) {
                 chatRepository.stopConnection()
+            }
+        }
+
+        // Cleanup error handling resources
+        errorRecoveryManager.cleanup()
+        audioManager?.let { manager ->
+            viewModelScope.launch {
+                manager.cleanup()
             }
         }
     }

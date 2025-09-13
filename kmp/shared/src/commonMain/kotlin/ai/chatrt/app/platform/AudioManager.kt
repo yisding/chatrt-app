@@ -1,10 +1,11 @@
 package ai.chatrt.app.platform
 
-import ai.chatrt.app.models.AudioQuality
+import ai.chatrt.app.models.*
 import kotlinx.coroutines.flow.Flow
 
 /**
  * Audio manager interface for handling audio routing and device management
+ * Requirements: 1.5, 2.3, 5.3
  */
 interface AudioManager {
     /**
@@ -34,6 +35,7 @@ interface AudioManager {
 
     /**
      * Handle headset connection/disconnection
+     * Requirement: 5.3 - Headphone connection/disconnection detection with audio routing
      */
     suspend fun handleHeadsetConnection(connected: Boolean)
 
@@ -53,7 +55,8 @@ interface AudioManager {
     suspend fun getCurrentAudioDevice(): AudioDevice?
 
     /**
-     * Observe audio device changes
+     * Observe audio device changes for real-time updates
+     * Requirement: 5.3 - Device state changes with appropriate UI feedback
      */
     fun observeAudioDeviceChanges(): Flow<AudioDevice>
 
@@ -76,38 +79,6 @@ interface AudioManager {
      * Cleanup audio resources
      */
     suspend fun cleanup()
-}
-
-/**
- * Audio modes for different scenarios
- */
-enum class AudioMode {
-    NORMAL,
-    CALL,
-    COMMUNICATION,
-    RINGTONE,
-}
-
-/**
- * Audio device types
- */
-data class AudioDevice(
-    val id: String,
-    val name: String,
-    val type: AudioDeviceType,
-    val isDefault: Boolean = false,
-)
-
-/**
- * Audio device types
- */
-enum class AudioDeviceType {
-    SPEAKER,
-    EARPIECE,
-    WIRED_HEADSET,
-    BLUETOOTH_HEADSET,
-    USB_HEADSET,
-    UNKNOWN,
 }
 
 /**

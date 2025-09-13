@@ -68,4 +68,8 @@ object BasicIcons {
     val description: ImageVector = Icons.Default.List
     val tipsAndUpdates: ImageVector = Icons.Default.Info
     val presentToAll: ImageVector = Icons.Default.Share
+
+    // Audio devices
+    val headphones: ImageVector = Icons.Default.Settings
+    val bluetooth: ImageVector = Icons.Default.Settings
 }

@@ -33,46 +33,29 @@ val androidModule =
         }
 
         // Platform Manager
-        single<PlatformManager> {
-            AndroidPlatformManager(
-                context = androidContext(),
-            )
-        }
+        single<PlatformManager> { AndroidPlatformManager(context = androidContext()) }
 
         // WebRTC Manager
         single<WebRtcManager> {
             AndroidWebRtcManager(
                 context = androidContext(),
+                audioManager = get<ai.chatrt.app.platform.AudioManager>() as AndroidAudioManager,
+                videoManager = get<VideoManager>() as AndroidVideoManager,
+                screenCaptureManager = get<ScreenCaptureManager>() as AndroidScreenCaptureManager,
             )
         }
 
         // Audio Manager
-        single<AudioManager> {
-            AndroidAudioManager(
-                context = androidContext(),
-            )
-        }
+        single<AudioManager> { AndroidAudioManager(context = androidContext()) }
 
         // Video Manager
-        single<VideoManager> {
-            AndroidVideoManager(
-                context = androidContext(),
-            )
-        }
+        single<VideoManager> { AndroidVideoManager(context = androidContext()) }
 
         // Screen Capture Manager
-        single<ScreenCaptureManager> {
-            AndroidScreenCaptureManager(
-                context = androidContext(),
-            )
-        }
+        single<ScreenCaptureManager> { AndroidScreenCaptureManager(context = androidContext()) }
 
         // Permission Manager
-        single<PermissionManager> {
-            AndroidPermissionManager(
-                context = androidContext(),
-            )
-        }
+        single<PermissionManager> { SimpleAndroidPermissionManager() }
 
         // Network Monitor
         single<NetworkMonitor> {

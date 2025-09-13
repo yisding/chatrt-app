@@ -26,6 +26,9 @@ kotlin {
 
             // Accompanist Permissions for Android permission handling
             implementation(libs.accompanist.permissions)
+
+            // Compose Navigation for Android
+            implementation(libs.compose.navigation)
         }
         commonMain.dependencies {
             implementation(compose.runtime)

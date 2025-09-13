@@ -91,7 +91,7 @@ class ChatRtApiService(
             } catch (e: Exception) {
                 when (e) {
                     is HttpRequestTimeoutException -> {
-                        Result.failure(ChatRtError.NetworkError)
+                        Result.failure(ChatRtError.NetworkError())
                     }
                     is ClientRequestException -> {
                         Result.failure(ChatRtError.ApiError(e.response.status.value, e.message ?: "Client error"))
@@ -100,7 +100,7 @@ class ChatRtApiService(
                         Result.failure(ChatRtError.ApiError(e.response.status.value, e.message ?: "Server error"))
                     }
                     else -> {
-                        Result.failure(ChatRtError.NetworkError)
+                        Result.failure(ChatRtError.NetworkError())
                     }
                 }
             }
@@ -133,7 +133,7 @@ class ChatRtApiService(
             } catch (e: Exception) {
                 when (e) {
                     is HttpRequestTimeoutException -> {
-                        Result.failure(ChatRtError.NetworkError)
+                        Result.failure(ChatRtError.NetworkError())
                     }
                     is ClientRequestException -> {
                         Result.failure(ChatRtError.ApiError(e.response.status.value, e.message ?: "Client error"))
@@ -142,7 +142,7 @@ class ChatRtApiService(
                         Result.failure(ChatRtError.ApiError(e.response.status.value, e.message ?: "Server error"))
                     }
                     else -> {
-                        Result.failure(ChatRtError.NetworkError)
+                        Result.failure(ChatRtError.NetworkError())
                     }
                 }
             }
@@ -157,7 +157,7 @@ class ChatRtApiService(
             val response = httpClient.get("$baseUrl/health")
             Result.success(response.status == HttpStatusCode.OK)
         } catch (e: Exception) {
-            Result.failure(ChatRtError.NetworkError)
+            Result.failure(ChatRtError.NetworkError())
         }
 
     /**
@@ -195,7 +195,7 @@ class ChatRtApiService(
         }
 
         // All retries failed, return the last exception
-        return Result.failure(lastException ?: ChatRtError.NetworkError)
+        return Result.failure(lastException ?: ChatRtError.NetworkError())
     }
 
     /**

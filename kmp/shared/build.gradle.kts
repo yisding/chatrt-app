@@ -49,6 +49,9 @@ kotlin {
 
             // Koin Android
             implementation(libs.koin.android)
+
+            // WebRTC Android SDK for platform-specific WebRTC implementation
+            implementation(libs.webrtc.android)
         }
 
         commonTest.dependencies {

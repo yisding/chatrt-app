@@ -33,7 +33,8 @@ class MainScreenTest {
         // composeTestRule.setContent {
         //     MainScreen(
         //         mainViewModel = mainViewModel,
-        //         settingsViewModel = settingsViewModel
+        //         settingsViewModel = settingsViewModel,
+        //         onNavigateToSettings = { }
         //     )
         // }
 
@@ -56,7 +57,8 @@ class MainScreenTest {
         // composeTestRule.setContent {
         //     MainScreen(
         //         mainViewModel = mainViewModel,
-        //         settingsViewModel = settingsViewModel
+        //         settingsViewModel = settingsViewModel,
+        //         onNavigateToSettings = { }
         //     )
         // }
 
@@ -82,7 +84,8 @@ class MainScreenTest {
         // composeTestRule.setContent {
         //     MainScreen(
         //         mainViewModel = mainViewModel,
-        //         settingsViewModel = settingsViewModel
+        //         settingsViewModel = settingsViewModel,
+        //         onNavigateToSettings = { }
         //     )
         // }
 
@@ -112,7 +115,8 @@ class MainScreenTest {
         // composeTestRule.setContent {
         //     MainScreen(
         //         mainViewModel = mainViewModel,
-        //         settingsViewModel = settingsViewModel
+        //         settingsViewModel = settingsViewModel,
+        //         onNavigateToSettings = { }
         //     )
         // }
 
@@ -138,7 +142,8 @@ class MainScreenTest {
         // composeTestRule.setContent {
         //     MainScreen(
         //         mainViewModel = mainViewModel,
-        //         settingsViewModel = settingsViewModel
+        //         settingsViewModel = settingsViewModel,
+        //         onNavigateToSettings = { }
         //     )
         // }
 
@@ -173,7 +178,8 @@ class MainScreenTest {
         // composeTestRule.setContent {
         //     MainScreen(
         //         mainViewModel = mainViewModel,
-        //         settingsViewModel = settingsViewModel
+        //         settingsViewModel = settingsViewModel,
+        //         onNavigateToSettings = { }
         //     )
         // }
 

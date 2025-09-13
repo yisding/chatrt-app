@@ -29,7 +29,6 @@ fun ControlButtons(
     onStartConnection: () -> Unit,
     onStopConnection: () -> Unit,
     onCameraSwitch: () -> Unit,
-    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -50,7 +49,6 @@ fun ControlButtons(
             connectionState = connectionState,
             videoMode = videoMode,
             onCameraSwitch = onCameraSwitch,
-            onOpenSettings = onOpenSettings,
         )
     }
 }
@@ -190,25 +188,24 @@ private fun SecondaryActionButtons(
     connectionState: ConnectionState,
     videoMode: VideoMode,
     onCameraSwitch: () -> Unit,
-    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+    // Only show camera switch button when in webcam mode
+    AnimatedVisibility(
+        visible = videoMode == VideoMode.WEBCAM,
+        enter =
+            scaleIn(
+                animationSpec =
+                    spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessMedium,
+                    ),
+            ) + fadeIn(),
+        exit = scaleOut() + fadeOut(),
     ) {
-        // Camera switch button (only visible for webcam mode)
-        AnimatedVisibility(
-            visible = videoMode == VideoMode.WEBCAM,
-            enter =
-                scaleIn(
-                    animationSpec =
-                        spring(
-                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                            stiffness = Spring.StiffnessMedium,
-                        ),
-                ) + fadeIn(),
-            exit = scaleOut() + fadeOut(),
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
         ) {
             SecondaryActionButton(
                 icon = BasicIcons.cameraSwitch,
@@ -217,22 +214,6 @@ private fun SecondaryActionButtons(
                 enabled = connectionState != ConnectionState.CONNECTING,
             )
         }
-
-        // Settings button
-        SecondaryActionButton(
-            icon = Icons.Default.Settings,
-            contentDescription = "Settings",
-            onClick = onOpenSettings,
-            enabled = true,
-        )
-
-        // Additional action button (placeholder for future features)
-        SecondaryActionButton(
-            icon = Icons.Default.MoreVert,
-            contentDescription = "More Options",
-            onClick = { /* TODO: Implement more options */ },
-            enabled = connectionState != ConnectionState.CONNECTING,
-        )
     }
 }
 

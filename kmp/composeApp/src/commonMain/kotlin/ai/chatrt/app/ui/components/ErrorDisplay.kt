@@ -1,6 +1,7 @@
 package ai.chatrt.app.ui.components
 
 import ai.chatrt.app.models.ChatRtError
+import ai.chatrt.app.models.DeviceStateChange
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
@@ -316,6 +317,13 @@ private fun getErrorIcon(error: ChatRtError): ImageVector =
         is ChatRtError.PhoneCallInterruptionError -> BasicIcons.phoneDisabled
         is ChatRtError.BatteryOptimizationError -> BasicIcons.batteryAlert
         is ChatRtError.NetworkQualityError -> BasicIcons.wifi
+        is ChatRtError.DeviceStateError ->
+            when (error.stateChange) {
+                DeviceStateChange.HEADPHONES_CONNECTED, DeviceStateChange.HEADPHONES_DISCONNECTED -> BasicIcons.headphones
+                DeviceStateChange.BLUETOOTH_CONNECTED, DeviceStateChange.BLUETOOTH_DISCONNECTED -> BasicIcons.bluetooth
+                DeviceStateChange.NETWORK_CHANGED -> BasicIcons.wifi
+                else -> BasicIcons.info
+            }
         is ChatRtError.ApiError -> BasicIcons.error
     }
 
@@ -334,86 +342,29 @@ private fun getErrorTitle(error: ChatRtError): String =
         is ChatRtError.PhoneCallInterruptionError -> "Call Interrupted"
         is ChatRtError.BatteryOptimizationError -> "Battery Issue"
         is ChatRtError.NetworkQualityError -> "Poor Connection"
+        is ChatRtError.DeviceStateError ->
+            when (error.stateChange) {
+                DeviceStateChange.HEADPHONES_CONNECTED -> "Headphones Connected"
+                DeviceStateChange.HEADPHONES_DISCONNECTED -> "Headphones Disconnected"
+                DeviceStateChange.BLUETOOTH_CONNECTED -> "Bluetooth Connected"
+                DeviceStateChange.BLUETOOTH_DISCONNECTED -> "Bluetooth Disconnected"
+                DeviceStateChange.NETWORK_CHANGED -> "Network Changed"
+                else -> "Device State Changed"
+            }
         is ChatRtError.ApiError -> "API Error"
     }
 
 /**
  * Gets the appropriate message for each error type
  */
-private fun getErrorMessage(error: ChatRtError): String =
-    when (error) {
-        is ChatRtError.NetworkError -> "Unable to connect to the server. Please check your internet connection."
-        is ChatRtError.PermissionDenied -> "Required permissions are not granted. Please enable permissions in settings."
-        is ChatRtError.WebRtcError -> "Failed to establish the call connection. Please try again."
-        is ChatRtError.AudioDeviceError -> "Unable to access the microphone. Please check your audio settings."
-        is ChatRtError.CameraError -> "Unable to access the camera. Please check your camera permissions."
-        is ChatRtError.ScreenCaptureError -> "Unable to start screen sharing. Please grant screen recording permission."
-        is ChatRtError.ServiceConnectionError -> "Unable to connect to the ChatRT service. Please try again later."
-        is ChatRtError.PhoneCallInterruptionError -> "The call was interrupted by an incoming phone call."
-        is ChatRtError.BatteryOptimizationError -> "Battery optimization is affecting the app performance."
-        is ChatRtError.NetworkQualityError -> "Poor network quality is affecting the call. Consider switching to audio-only mode."
-        is ChatRtError.ApiError -> error.message
-    }
+private fun getErrorMessage(error: ChatRtError): String = error.userMessage
 
 /**
  * Gets helpful suggestions for each error type
  */
-private fun getErrorSuggestions(error: ChatRtError): List<String> =
-    when (error) {
-        is ChatRtError.NetworkError ->
-            listOf(
-                "Check your WiFi or mobile data connection",
-                "Try switching between WiFi and mobile data",
-                "Move closer to your router if using WiFi",
-            )
-        is ChatRtError.PermissionDenied ->
-            listOf(
-                "Go to Settings > Apps > ChatRT > Permissions",
-                "Enable Camera and Microphone permissions",
-                "Restart the app after granting permissions",
-            )
-        is ChatRtError.WebRtcError ->
-            listOf(
-                "Check your internet connection",
-                "Try switching to audio-only mode",
-                "Restart the app if the problem persists",
-            )
-        is ChatRtError.AudioDeviceError ->
-            listOf(
-                "Check if another app is using the microphone",
-                "Try unplugging and reconnecting headphones",
-                "Restart the app to reset audio settings",
-            )
-        is ChatRtError.CameraError ->
-            listOf(
-                "Check if another app is using the camera",
-                "Try switching to audio-only mode",
-                "Restart the app to reset camera settings",
-            )
-        is ChatRtError.ScreenCaptureError ->
-            listOf(
-                "Grant screen recording permission when prompted",
-                "Try switching to camera mode instead",
-                "Check if screen recording is restricted by your device",
-            )
-        is ChatRtError.NetworkQualityError ->
-            listOf(
-                "Switch to audio-only mode for better performance",
-                "Move closer to your WiFi router",
-                "Close other apps using internet",
-            )
-        else -> emptyList()
-    }
+private fun getErrorSuggestions(error: ChatRtError): List<String> = error.suggestions
 
 /**
  * Determines if an error type supports retry functionality
  */
-private fun isRetryable(error: ChatRtError): Boolean =
-    when (error) {
-        is ChatRtError.NetworkError,
-        is ChatRtError.WebRtcError,
-        is ChatRtError.ServiceConnectionError,
-        is ChatRtError.ApiError,
-        -> true
-        else -> false
-    }
+private fun isRetryable(error: ChatRtError): Boolean = error.isRetryable

@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 fun MainScreen(
     mainViewModel: MainViewModel,
     settingsViewModel: SettingsViewModel,
+    onNavigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // Collect state from ViewModels
@@ -45,7 +46,6 @@ fun MainScreen(
 
     // Local UI state
     var isLogsExpanded by remember { mutableStateOf(false) }
-    var showSettingsDialog by remember { mutableStateOf(false) }
 
     // Motion system animations
     val scrollState = rememberScrollState()
@@ -67,7 +67,7 @@ fun MainScreen(
         ) {
             // App Header with Material 3 Expressive styling
             AppHeader(
-                onSettingsClick = { showSettingsDialog = true },
+                onSettingsClick = onNavigateToSettings,
             )
 
             // Connection Status Indicator with animations
@@ -117,7 +117,6 @@ fun MainScreen(
                 onStartConnection = mainViewModel::startConnection,
                 onStopConnection = mainViewModel::stopConnection,
                 onCameraSwitch = mainViewModel::switchCamera,
-                onOpenSettings = { showSettingsDialog = true },
             )
 
             // Platform Optimization Suggestions with Material 3 Expressive cards
@@ -165,30 +164,6 @@ fun MainScreen(
 
             // Add bottom padding for better scrolling experience
             Spacer(modifier = Modifier.height(32.dp))
-        }
-
-        // Settings Dialog (placeholder for task 10)
-        if (showSettingsDialog) {
-            AlertDialog(
-                onDismissRequest = { showSettingsDialog = false },
-                title = {
-                    Text(
-                        text = "Settings",
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
-                },
-                text = {
-                    Text(
-                        text = "Settings screen will be implemented in task 10",
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                },
-                confirmButton = {
-                    TextButton(onClick = { showSettingsDialog = false }) {
-                        Text("OK")
-                    }
-                },
-            )
         }
     }
 }

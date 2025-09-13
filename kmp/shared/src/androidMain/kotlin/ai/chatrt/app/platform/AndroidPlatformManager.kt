@@ -9,20 +9,19 @@ import android.content.Context
 class AndroidPlatformManager(
     private val context: Context,
 ) : PlatformManager {
-    private val permissionManager by lazy { AndroidPermissionManager(context) }
-    private val webRtcManager by lazy { AndroidWebRtcManager(context) }
     private val audioManager by lazy { AndroidAudioManager(context) }
     private val videoManager by lazy { AndroidVideoManager(context) }
     private val screenCaptureManager by lazy { AndroidScreenCaptureManager(context) }
+    private val webRtcManager by lazy { AndroidWebRtcManager(context, audioManager, videoManager, screenCaptureManager) }
+    private val permissionManager by lazy { createPermissionManager() }
     private val networkMonitor by lazy { AndroidNetworkMonitor(context) }
     private val batteryMonitor by lazy { AndroidBatteryMonitor(context) }
     private val lifecycleManager by lazy { AndroidLifecycleManager(context) }
 
     override suspend fun requestPermissions(permissions: List<Permission>): PermissionResult {
-        val results = permissionManager.requestPermissions(permissions)
-        return PermissionResult(
-            granted = results.mapValues { it.value == PermissionStatus.GRANTED },
-        )
+        // Minimal stub: report all permissions as granted=false by default
+        val granted = permissions.associateWith { false }
+        return PermissionResult(granted = granted, shouldShowRationale = permissions.associateWith { false })
     }
 
     override fun createWebRtcManager(): WebRtcManager = webRtcManager
@@ -41,63 +40,20 @@ class AndroidPlatformManager(
 
     override fun createLifecycleManager(): LifecycleManager = lifecycleManager
 
-    override suspend fun handleSystemInterruption(): SystemInterruption? {
-        // Get the most recent system interruption if any
-        // In a real implementation, this would check current system state
-        return null
-    }
+    override suspend fun handleSystemInterruption(): SystemInterruption? = null
 
     override suspend fun getResourceConstraints(): ResourceConstraints {
         val runtime = Runtime.getRuntime()
-        val batteryState = batteryMonitor.getBatteryState()
-        val networkState = networkMonitor.getCurrentNetworkState()
-
+        val net = networkMonitor.getCurrentNetworkState()
         return ResourceConstraints(
             availableMemory = runtime.freeMemory(),
-            cpuUsage = 0.0f, // Would need more complex implementation
-            networkBandwidth = if (networkState.isConnected) 1000000L else 0L,
-            platformSpecific =
-                mapOf(
-                    "batteryLevel" to batteryState.level.toString(),
-                    "isCharging" to batteryState.isCharging.toString(),
-                    "networkType" to networkState.networkType.name,
-                ),
+            cpuUsage = 0f,
+            networkBandwidth = if (net.isConnected) 1_000_000L else 0L,
+            platformSpecific = emptyMap(),
         )
     }
 
-    override suspend fun createPlatformOptimization(): PlatformOptimization? {
-        val batteryState = batteryMonitor.getBatteryState()
-        val networkQuality = networkMonitor.getCurrentNetworkQuality()
-        val resourceConstraints = getResourceConstraints()
-
-        return when {
-            batteryState.level < 20 && !batteryState.isCharging -> {
-                PlatformOptimization(
-                    recommendedVideoMode = VideoMode.AUDIO_ONLY,
-                    recommendedAudioQuality = AudioQuality.LOW,
-                    disableVideoPreview = true,
-                    reason = OptimizationReason.LOW_BATTERY,
-                )
-            }
-            networkQuality == NetworkQuality.POOR -> {
-                PlatformOptimization(
-                    recommendedVideoMode = VideoMode.AUDIO_ONLY,
-                    recommendedAudioQuality = AudioQuality.LOW,
-                    disableVideoPreview = false,
-                    reason = OptimizationReason.POOR_NETWORK,
-                )
-            }
-            resourceConstraints.availableMemory < 100 * 1024 * 1024 -> { // Less than 100MB
-                PlatformOptimization(
-                    recommendedVideoMode = VideoMode.AUDIO_ONLY,
-                    recommendedAudioQuality = AudioQuality.MEDIUM,
-                    disableVideoPreview = true,
-                    reason = OptimizationReason.LOW_MEMORY,
-                )
-            }
-            else -> null
-        }
-    }
+    override suspend fun createPlatformOptimization(): PlatformOptimization? = null
 }
 
 /**

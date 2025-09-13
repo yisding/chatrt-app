@@ -389,9 +389,13 @@ class SettingsViewModel(
         when {
             exception.message?.contains("network", ignoreCase = true) == true ||
                 exception.message?.contains("connection", ignoreCase = true) == true ||
-                exception.message?.contains("host", ignoreCase = true) == true -> ChatRtError.NetworkError
+                exception.message?.contains("host", ignoreCase = true) == true -> ChatRtError.NetworkError()
             exception.message?.contains("permission", ignoreCase = true) == true ||
-                exception.message?.contains("security", ignoreCase = true) == true -> ChatRtError.PermissionDenied
+                exception.message?.contains("security", ignoreCase = true) == true ->
+                ChatRtError.PermissionDenied(
+                    permission = PermissionType.MICROPHONE,
+                    isPermanentlyDenied = false,
+                )
             else -> ChatRtError.ApiError(0, exception.message ?: "Unknown error")
         }
 }

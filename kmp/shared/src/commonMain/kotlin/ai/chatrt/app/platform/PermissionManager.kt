@@ -1,96 +1,92 @@
 package ai.chatrt.app.platform
 
+import ai.chatrt.app.models.PermissionType
 import kotlinx.coroutines.flow.Flow
 
 /**
  * Permission manager interface for handling platform-specific permissions
+ * Requirements: 1.2, 2.6, 3.6 - Permission handling with fallback options
  */
 interface PermissionManager {
     /**
-     * Check if microphone permission is granted
+     * Check if a specific permission is granted
      */
-    suspend fun checkMicrophonePermission(): Boolean
+    suspend fun checkPermission(permission: PermissionType): Boolean
 
     /**
-     * Check if camera permission is granted
+     * Request a specific permission
      */
-    suspend fun checkCameraPermission(): Boolean
-
-    /**
-     * Check if screen capture permission is granted
-     */
-    suspend fun checkScreenCapturePermission(): Boolean
-
-    /**
-     * Check if notification permission is granted
-     */
-    suspend fun checkNotificationPermission(): Boolean
-
-    /**
-     * Request microphone permission
-     */
-    suspend fun requestMicrophonePermission(): PermissionStatus
-
-    /**
-     * Request camera permission
-     */
-    suspend fun requestCameraPermission(): PermissionStatus
-
-    /**
-     * Request screen capture permission
-     */
-    suspend fun requestScreenCapturePermission(): ScreenCapturePermissionResult
-
-    /**
-     * Request notification permission
-     */
-    suspend fun requestNotificationPermission(): PermissionStatus
+    suspend fun requestPermission(permission: PermissionType): Boolean
 
     /**
      * Request multiple permissions at once
      */
-    suspend fun requestPermissions(permissions: List<Permission>): Map<Permission, PermissionStatus>
+    suspend fun requestMultiplePermissions(permissions: List<PermissionType>): Map<PermissionType, Boolean>
 
     /**
      * Check if should show permission rationale
      */
-    suspend fun shouldShowRationale(permission: Permission): Boolean
+    fun shouldShowRationale(permission: PermissionType): Boolean
 
     /**
      * Open app settings for manual permission grant
      */
-    suspend fun openAppSettings()
+    fun openAppSettings()
 
     /**
      * Observe permission changes
      */
     fun observePermissionChanges(): Flow<PermissionChange>
-}
 
-/**
- * Permission status result
- */
-enum class PermissionStatus {
-    GRANTED,
-    DENIED,
-    PERMANENTLY_DENIED,
-    NOT_DETERMINED,
-}
+    // Convenience methods for specific permissions
 
-/**
- * Screen capture permission result (may include additional data on some platforms)
- */
-data class ScreenCapturePermissionResult(
-    val status: PermissionStatus,
-    val data: Any? = null, // Platform-specific data (e.g., MediaProjection intent on Android)
-)
+    /**
+     * Check if microphone permission is granted
+     */
+    suspend fun checkMicrophonePermission(): Boolean = checkPermission(PermissionType.MICROPHONE)
+
+    /**
+     * Check if camera permission is granted
+     */
+    suspend fun checkCameraPermission(): Boolean = checkPermission(PermissionType.CAMERA)
+
+    /**
+     * Check if screen capture permission is granted
+     */
+    suspend fun checkScreenCapturePermission(): Boolean = checkPermission(PermissionType.SCREEN_CAPTURE)
+
+    /**
+     * Check if notification permission is granted
+     */
+    suspend fun checkNotificationPermission(): Boolean = checkPermission(PermissionType.NOTIFICATION)
+
+    /**
+     * Request microphone permission
+     */
+    suspend fun requestMicrophonePermission(): Boolean = requestPermission(PermissionType.MICROPHONE)
+
+    /**
+     * Request camera permission
+     */
+    suspend fun requestCameraPermission(): Boolean = requestPermission(PermissionType.CAMERA)
+
+    /**
+     * Request screen capture permission
+     */
+    suspend fun requestScreenCapturePermission(): Boolean = requestPermission(PermissionType.SCREEN_CAPTURE)
+
+    /**
+     * Request notification permission
+     */
+    suspend fun requestNotificationPermission(): Boolean = requestPermission(PermissionType.NOTIFICATION)
+}
 
 /**
  * Permission change event
  */
 data class PermissionChange(
-    val permission: Permission,
-    val status: PermissionStatus,
+    val permission: PermissionType,
+    val granted: Boolean,
 )
 
 /**

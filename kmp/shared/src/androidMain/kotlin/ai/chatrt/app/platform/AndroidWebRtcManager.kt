@@ -1,49 +1,72 @@
 package ai.chatrt.app.platform
 
+import ai.chatrt.app.models.AudioMode
 import ai.chatrt.app.models.ConnectionState
 import ai.chatrt.app.models.VideoMode
 import android.content.Context
+import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
- * Android implementation of WebRtcManager using WebRTC Android SDK
+ * Simplified Android WebRTC manager stub for build stability.
+ * Provides the interface implementation without binding to the WebRTC SDK.
  */
 class AndroidWebRtcManager(
     private val context: Context,
+    private val audioManager: AndroidAudioManager,
+    private val videoManager: AndroidVideoManager,
+    private val screenCaptureManager: AndroidScreenCaptureManager,
 ) : WebRtcManager {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
     private val _connectionState = MutableStateFlow(ConnectionState.DISCONNECTED)
     private val _iceConnectionState = MutableStateFlow(IceConnectionState.NEW)
 
+    private var currentVideoMode = VideoMode.AUDIO_ONLY
+    private var isInitialized = false
+
     override suspend fun initialize() {
-        // Initialize WebRTC Android SDK
-        // This would include PeerConnectionFactory setup
+        // Initialize audio/video managers and configure audio routing
+        audioManager.initialize()
+        videoManager.initialize()
+        audioManager.setupAudioRouting()
+        audioManager.setAudioMode(AudioMode.COMMUNICATION)
+        isInitialized = true
     }
 
     override suspend fun createOffer(): String {
-        // Create SDP offer using WebRTC Android SDK
-        return "v=0\r\no=- 0 0 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\n" // Placeholder SDP
+        check(isInitialized) { "WebRTC manager not initialized" }
+        _connectionState.value = ConnectionState.CONNECTING
+        _iceConnectionState.value = IceConnectionState.CHECKING
+        // Return a placeholder SDP for now
+        return "v=0\no=- 0 0 IN IP4 127.0.0.1\ns=ChatRT\nt=0 0\nm=audio 9 RTP/AVP 0\na=rtpmap:0 PCMU/8000"
     }
 
     override suspend fun setRemoteDescription(sdp: String) {
-        // Set remote SDP description
+        // No-op in stub
+        _connectionState.value = ConnectionState.CONNECTED
+        _iceConnectionState.value = IceConnectionState.CONNECTED
     }
 
     override suspend fun addLocalStream(videoMode: VideoMode) {
-        // Add local media stream based on video mode
+        currentVideoMode = videoMode
+        // No-op in stub
     }
 
     override suspend fun removeLocalStream() {
-        // Remove local media stream
+        // No-op in stub
     }
 
     override suspend fun setRemoteAudioSink(audioSink: AudioSink) {
-        // Set up remote audio sink
+        // No-op in stub
     }
 
     override suspend fun close() {
-        // Close peer connection and cleanup
         _connectionState.value = ConnectionState.DISCONNECTED
         _iceConnectionState.value = IceConnectionState.CLOSED
     }
@@ -53,22 +76,24 @@ class AndroidWebRtcManager(
     override fun observeIceConnectionState(): Flow<IceConnectionState> = _iceConnectionState.asStateFlow()
 
     override suspend fun switchCamera() {
-        // Switch camera implementation
+        // No-op in stub
     }
 
-    override suspend fun getVideoStats(): VideoStats? {
-        // Get video statistics
-        return null
+    override suspend fun getVideoStats(): VideoStats? = null
+
+    override suspend fun getAudioStats(): AudioStats? = null
+
+    // Convenience controls
+    fun muteAudio(mute: Boolean) {
+        Log.d("AndroidWebRtcManager", "muteAudio=$mute")
     }
 
-    override suspend fun getAudioStats(): AudioStats? {
-        // Get audio statistics
-        return null
+    fun muteVideo(mute: Boolean) {
+        Log.d("AndroidWebRtcManager", "muteVideo=$mute")
     }
 }
 
-/**
- * Factory function for creating Android WebRTC manager
- */
 actual fun createWebRtcManager(): WebRtcManager =
-    throw IllegalStateException("Android WebRtcManager requires Context. Use AndroidWebRtcManager(context) directly.")
+    throw IllegalStateException(
+        "Android WebRtcManager requires Context and platform managers. Use AndroidWebRtcManager(context, audioManager, videoManager, screenCaptureManager) directly.",
+    )
