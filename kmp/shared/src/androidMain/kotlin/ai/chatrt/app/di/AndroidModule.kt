@@ -1,80 +1,63 @@
 package ai.chatrt.app.di
 
-import ai.chatrt.app.platform.*
-import android.content.Context
-import io.ktor.client.*
-import io.ktor.client.engine.android.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.json.Json
+import ai.chatrt.app.platform.AndroidAudioManager
+import ai.chatrt.app.platform.AndroidBatteryMonitor
+import ai.chatrt.app.platform.AndroidLifecycleManager
+import ai.chatrt.app.platform.AndroidNetworkMonitor
+import ai.chatrt.app.platform.AndroidPlatformManager
+import ai.chatrt.app.platform.AndroidScreenCaptureManager
+import ai.chatrt.app.platform.AndroidVideoManager
+import ai.chatrt.app.platform.AndroidWebRtcManager
+import ai.chatrt.app.platform.AudioManager
+import ai.chatrt.app.platform.BatteryMonitor
+import ai.chatrt.app.platform.LifecycleManager
+import ai.chatrt.app.platform.NetworkMonitor
+import ai.chatrt.app.platform.PermissionManager
+import ai.chatrt.app.platform.PlatformManager
+import ai.chatrt.app.platform.ScreenCaptureManager
+import ai.chatrt.app.platform.SimpleAndroidPermissionManager
+import ai.chatrt.app.platform.VideoManager
+import ai.chatrt.app.platform.WebRtcManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 /**
- * Android-specific Koin module for platform managers
- * Contains Android platform implementations and system services
+ * Android-specific Koin module for platform dependencies
  */
-val androidModule =
-    module {
+val androidModule = module {
+    // Core platform managers (bind concrete + interface alias to share one instance)
+    single { AndroidLifecycleManager(androidContext()) }
+    single<LifecycleManager> { get<AndroidLifecycleManager>() }
 
-        // Override HTTP Client with Android engine
-        single<HttpClient>(createdAtStart = true) {
-            HttpClient(Android) {
-                install(ContentNegotiation) {
-                    json(
-                        Json {
-                            prettyPrint = true
-                            isLenient = true
-                            ignoreUnknownKeys = true
-                        },
-                    )
-                }
-            }
-        }
+    single<PermissionManager> { SimpleAndroidPermissionManager() }
 
-        // Platform Manager
-        single<PlatformManager> { AndroidPlatformManager(context = androidContext()) }
+    single { AndroidAudioManager(androidContext()) }
+    single<AudioManager> { get<AndroidAudioManager>() }
 
-        // WebRTC Manager
-        single<WebRtcManager> {
-            AndroidWebRtcManager(
-                context = androidContext(),
-                audioManager = get<ai.chatrt.app.platform.AudioManager>() as AndroidAudioManager,
-                videoManager = get<VideoManager>() as AndroidVideoManager,
-                screenCaptureManager = get<ScreenCaptureManager>() as AndroidScreenCaptureManager,
-            )
-        }
+    single { AndroidVideoManager(androidContext()) }
+    single<VideoManager> { get<AndroidVideoManager>() }
 
-        // Audio Manager
-        single<AudioManager> { AndroidAudioManager(context = androidContext()) }
+    single { AndroidScreenCaptureManager(androidContext()) }
+    single<ScreenCaptureManager> { get<AndroidScreenCaptureManager>() }
 
-        // Video Manager
-        single<VideoManager> { AndroidVideoManager(context = androidContext()) }
+    // Network and battery monitoring
+    single { AndroidNetworkMonitor(androidContext()) }
+    single<NetworkMonitor> { get<AndroidNetworkMonitor>() }
 
-        // Screen Capture Manager
-        single<ScreenCaptureManager> { AndroidScreenCaptureManager(context = androidContext()) }
+    single { AndroidBatteryMonitor(androidContext()) }
+    single<BatteryMonitor> { get<AndroidBatteryMonitor>() }
 
-        // Permission Manager
-        single<PermissionManager> { SimpleAndroidPermissionManager() }
-
-        // Network Monitor
-        single<NetworkMonitor> {
-            AndroidNetworkMonitor(
-                context = androidContext(),
-            )
-        }
-
-        // Battery Monitor
-        single<BatteryMonitor> {
-            AndroidBatteryMonitor(
-                context = androidContext(),
-            )
-        }
-
-        // Lifecycle Manager
-        single<LifecycleManager> {
-            AndroidLifecycleManager(
-                context = androidContext(),
-            )
-        }
+    // WebRTC manager with dependencies
+    single {
+        AndroidWebRtcManager(
+            context = androidContext(),
+            audioManager = get(),
+            videoManager = get(),
+            screenCaptureManager = get(),
+        )
     }
+    single<WebRtcManager> { get<AndroidWebRtcManager>() }
+
+    // Platform manager that coordinates all platform services
+    single<PlatformManager> { AndroidPlatformManager(androidContext()) }
+}
