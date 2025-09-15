@@ -152,8 +152,10 @@ class WebRtcEventLoggerTest {
                 mapOf(
                     "packetsLost" to 10,
                     "packetsReceived" to 1000,
-                    "roundTripTime" to 0.05, // 50ms in seconds
-                    "jitter" to 0.002, // 2ms in seconds
+                    // 50ms in seconds
+                    "roundTripTime" to 0.05,
+                    // 2ms in seconds
+                    "jitter" to 0.002,
                     "frameWidth" to 1280,
                     "frameHeight" to 720,
                     "framesPerSecond" to 25.0,

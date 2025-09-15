@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package ai.chatrt.app.ui.theme
 
 import androidx.compose.animation.core.*

@@ -1,8 +1,6 @@
 package ai.chatrt.app.integration
 
 import ai.chatrt.app.models.ConnectionState
-import ai.chatrt.app.models.InterruptionType
-import ai.chatrt.app.models.SystemInterruption
 import ai.chatrt.app.models.VideoMode
 import ai.chatrt.app.platform.AndroidLifecycleManager
 import ai.chatrt.app.service.ChatRtService

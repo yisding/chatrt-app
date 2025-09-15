@@ -34,10 +34,10 @@ class ChatRepositoryImpl(
     private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private val _connectionState = MutableStateFlow(ConnectionState.DISCONNECTED)
-    private val connectionState: StateFlow<ConnectionState> = _connectionState.asStateFlow()
+    val connectionState: StateFlow<ConnectionState> = _connectionState.asStateFlow()
 
     private val _logs = MutableStateFlow<List<LogEntry>>(emptyList())
-    private val logs: StateFlow<List<LogEntry>> = _logs.asStateFlow()
+    val logs: StateFlow<List<LogEntry>> = _logs.asStateFlow()
 
     private var currentCallId: String? = null
     private var isWebRtcInitialized = false

@@ -1,7 +1,6 @@
 package ai.chatrt.app.performance
 
 import ai.chatrt.app.models.*
-import ai.chatrt.app.repository.ChatRepositoryImpl
 import ai.chatrt.app.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -399,7 +398,8 @@ class PerformanceMonitor {
 
     fun getConnectionMetrics(): ConnectionMetrics =
         ConnectionMetrics(
-            averageConnectionTime = if (connectionAttempts > 0) 1500L else 0L, // Simulated
+            // Simulated
+            averageConnectionTime = if (connectionAttempts > 0) 1500L else 0L,
             successRate = if (connectionAttempts > 0) successfulConnections.toDouble() / connectionAttempts else 1.0,
         )
 
@@ -408,7 +408,8 @@ class PerformanceMonitor {
         return MemoryMetrics(
             memoryLeakDetected = false,
             peakMemoryUsage = currentMemory,
-            memoryThreshold = 100 * 1024 * 1024, // 100MB threshold
+            // 100MB threshold
+            memoryThreshold = 100 * 1024 * 1024,
         )
     }
 
@@ -421,7 +422,8 @@ class PerformanceMonitor {
     fun getCleanupMetrics(): CleanupMetrics =
         CleanupMetrics(
             resourcesProperlyReleased = true,
-            cleanupTime = 200L, // Simulated cleanup time
+            // Simulated cleanup time
+            cleanupTime = 200L,
         )
 
     fun getOverallPerformanceMetrics(): OverallPerformanceMetrics =
@@ -545,8 +547,7 @@ class MockChatRepository : ai.chatrt.app.repository.ChatRepository {
 
     override suspend fun startConnectionMonitoring(callId: String): Result<Unit> = Result.success(Unit)
 
-    override fun observeConnectionState(): kotlinx.coroutines.flow.Flow<ConnectionState> =
-        kotlinx.coroutines.flow.flowOf(ConnectionState.DISCONNECTED)
+    override fun observeConnectionState(): kotlinx.coroutines.flow.Flow<ConnectionState> = kotlinx.coroutines.flow.flowOf(ConnectionState.DISCONNECTED)
 
     override fun observeLogs(): kotlinx.coroutines.flow.Flow<List<LogEntry>> = kotlinx.coroutines.flow.flowOf(emptyList())
 }

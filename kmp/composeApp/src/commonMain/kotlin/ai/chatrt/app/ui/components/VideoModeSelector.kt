@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package ai.chatrt.app.ui.components
 
 import ai.chatrt.app.models.VideoMode
@@ -132,9 +134,10 @@ private fun VideoModeOption(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             // Radio button with enhanced styling
+            // Click is handled by the parent Card
             RadioButton(
                 selected = isSelected,
-                onClick = null, // Handled by card click
+                onClick = null,
                 enabled = enabled,
                 colors =
                     RadioButtonDefaults.colors(

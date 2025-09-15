@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 package ai.chatrt.app.repository
 
 import ai.chatrt.app.models.ConnectionState

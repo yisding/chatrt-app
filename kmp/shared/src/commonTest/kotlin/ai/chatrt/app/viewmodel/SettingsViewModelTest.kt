@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 package ai.chatrt.app.viewmodel
 
 import ai.chatrt.app.models.*

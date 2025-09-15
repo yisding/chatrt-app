@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
  */
 open class SettingsRepositoryImpl : SettingsRepository {
     private val _settings = MutableStateFlow(AppSettings())
-    private val settings: StateFlow<AppSettings> = _settings.asStateFlow()
+    val settings: StateFlow<AppSettings> = _settings.asStateFlow()
 
     override fun observeSettings(): Flow<AppSettings> = settings
 

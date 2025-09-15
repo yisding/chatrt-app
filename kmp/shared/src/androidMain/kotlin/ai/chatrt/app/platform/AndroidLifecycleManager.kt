@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 package ai.chatrt.app.platform
 
 import ai.chatrt.app.models.InterruptionType
@@ -131,7 +133,8 @@ class AndroidLifecycleManager(
         val interruption =
             SystemInterruption(
                 type = InterruptionType.LOW_POWER_MODE,
-                shouldPause = false, // Continue in background for calls
+                // Continue in background for calls
+                shouldPause = false,
                 canResume = true,
             )
         _systemInterruptions.tryEmit(interruption)
@@ -337,6 +340,7 @@ class AndroidLifecycleManager(
      * Request battery optimization exemption for background operation
      * Requirement: 5.1
      */
+    @android.annotation.SuppressLint("BatteryLife")
     suspend fun requestBatteryOptimizationExemption() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             if (!powerManager.isIgnoringBatteryOptimizations(context.packageName)) {
@@ -381,5 +385,4 @@ enum class BatteryOptimization {
 /**
  * Factory function for creating Android lifecycle manager
  */
-actual fun createLifecycleManager(): LifecycleManager =
-    throw IllegalStateException("Android LifecycleManager requires Context. Use AndroidLifecycleManager(context) directly.")
+actual fun createLifecycleManager(): LifecycleManager = throw IllegalStateException("Android LifecycleManager requires Context. Use AndroidLifecycleManager(context) directly.")

@@ -1,0 +1,34 @@
+# Kotlin code style for ktlint
+
+# This file configures ktlint to align with the project's usage
+# of star-imports for Compose, Ktor, and internal packages.
+
+[*.{kt,kts}]
+ktlint_code_style = ktlint_official
+
+# Do not automatically collapse imports to stars based on count
+ij_kotlin_name_count_to_use_star_import = 999
+ij_kotlin_name_count_to_use_star_import_for_members = 999
+
+# Allow star imports for selected packages used heavily in this project
+ij_kotlin_packages_to_use_import_on_demand = androidx.compose.*,androidx.navigation.compose.*,io.ktor.client.*,io.ktor.client.call.*,io.ktor.client.plugins.*,io.ktor.client.plugins.contentnegotiation.*,io.ktor.client.request.*,io.ktor.http.*,io.ktor.serialization.kotlinx.json.*,kotlinx.coroutines.flow.*,kotlin.test.*,ai.chatrt.app.models.*,ai.chatrt.app.platform.*
+
+# Lint rule customizations
+ktlint_standard_no-wildcard-imports = disabled
+ktlint_standard_max-line-length = disabled
+ktlint_standard_import-ordering = disabled
+
+# Disable noisy rules in generated and build directories to keep CLI clean
+[**/build/**]
+ktlint_standard_function-naming = disabled
+ktlint_standard_class-naming = disabled
+ktlint_standard_backing-property-naming = disabled
+ktlint_standard_if-else-wrapping = disabled
+ktlint_standard_import-ordering = disabled
+ktlint_standard_indent = disabled
+ktlint_standard_max-line-length = disabled
+ktlint_standard_string-template-indent = disabled
+
+# Optional: Increase max line length tolerance for readability in Compose DSLs
+# Uncomment if your ktlint profile enforces the standard max-line-length rule strictly
+# ktlint_standard_max-line-length = disabled

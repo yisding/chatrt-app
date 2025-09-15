@@ -16,11 +16,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.MainScope
+
 import kotlinx.coroutines.launch
 
 /**
@@ -30,6 +28,7 @@ import kotlinx.coroutines.launch
  * Requirements: 1.1, 1.6, 2.1, 3.1, 4.1
  */
 @OptIn(ExperimentalMaterial3Api::class)
+@Suppress("FunctionName")
 @Composable
 fun MainScreen(
     mainViewModel: MainViewModel,
@@ -212,6 +211,7 @@ fun MainScreen(
 /**
  * App header with Material 3 Expressive styling
  */
+@Suppress("FunctionName")
 @Composable
 private fun AppHeader(
     onSettingsClick: () -> Unit,

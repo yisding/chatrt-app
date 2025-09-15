@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.time.ExperimentalTime::class)
+
 package ai.chatrt.app.logging
 
 import kotlinx.coroutines.flow.Flow
@@ -149,7 +151,8 @@ class DebugInfoCollector(
             activeConnections = connectionStates.values.count { it == "Connected" },
             connectionStates = connectionStates,
             lastConnectionError = lastError,
-            totalBytesTransferred = 0L, // Would need to be calculated from stats
+            // Would need to be calculated from stats
+            totalBytesTransferred = 0L,
             averageLatency = averageLatency,
         )
     }

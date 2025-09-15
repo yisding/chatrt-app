@@ -73,7 +73,8 @@ data class NetworkState(
     val isConnected: Boolean,
     val networkType: NetworkType,
     val isMetered: Boolean = false,
-    val signalStrength: Int = 0, // 0-100, -1 if unknown
+    // 0-100, -1 if unknown
+    val signalStrength: Int = 0,
 )
 
 /**
@@ -93,9 +94,12 @@ enum class NetworkType {
  * Network capabilities
  */
 data class NetworkCapabilities(
-    val downloadBandwidth: Long, // bits per second
-    val uploadBandwidth: Long, // bits per second
-    val latency: Int, // milliseconds
+    // bits per second
+    val downloadBandwidth: Long,
+    // bits per second
+    val uploadBandwidth: Long,
+    // milliseconds
+    val latency: Int,
     val supportsInternet: Boolean,
     val isValidated: Boolean,
 )
@@ -104,11 +108,16 @@ data class NetworkCapabilities(
  * Bandwidth measurement information
  */
 data class BandwidthInfo(
-    val downloadSpeed: Long, // bits per second
-    val uploadSpeed: Long, // bits per second
-    val latency: Int, // milliseconds
-    val jitter: Int, // milliseconds
-    val packetLoss: Float, // percentage (0.0 - 100.0)
+    // bits per second
+    val downloadSpeed: Long,
+    // bits per second
+    val uploadSpeed: Long,
+    // milliseconds
+    val latency: Int,
+    // milliseconds
+    val jitter: Int,
+    // percentage (0.0 - 100.0)
+    val packetLoss: Float,
 )
 
 /**

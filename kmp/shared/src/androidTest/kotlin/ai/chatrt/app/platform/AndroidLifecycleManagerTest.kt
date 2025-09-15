@@ -1,6 +1,5 @@
 package ai.chatrt.app.platform
 
-import ai.chatrt.app.models.InterruptionType
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4

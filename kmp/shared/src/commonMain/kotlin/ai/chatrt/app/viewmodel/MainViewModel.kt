@@ -1,8 +1,6 @@
 package ai.chatrt.app.viewmodel
 
 import ai.chatrt.app.logging.DebugInfoCollector
-import ai.chatrt.app.logging.LogCategory
-import ai.chatrt.app.logging.LogLevel
 import ai.chatrt.app.logging.Logger
 import ai.chatrt.app.logging.WebRtcEventLogger
 import ai.chatrt.app.models.*
@@ -14,7 +12,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 
 /**
  * Main ViewModel for ChatRT application
@@ -624,7 +621,8 @@ class MainViewModel(
      */
     private fun createCallRequest(): CallRequest =
         CallRequest(
-            sdp = "", // This will be filled by WebRTC implementation
+            // This will be filled by WebRTC implementation
+            sdp = "",
             session =
                 SessionConfig(
                     type = "realtime",

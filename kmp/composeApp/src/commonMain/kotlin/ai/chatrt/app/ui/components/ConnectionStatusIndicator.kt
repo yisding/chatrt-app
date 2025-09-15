@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName", "ktlint:standard:if-else-wrapping")
+
 package ai.chatrt.app.ui.components
 
 import ai.chatrt.app.models.ConnectionState
@@ -15,8 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.vector.ImageVector
+
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -172,9 +173,10 @@ fun ConnectionStatusIndicator(
                                 .size(16.dp)
                                 .scale(rippleScale),
                     ) {
+                        // Fade out as the ripple expands
                         drawCircle(
                             color = statusColor,
-                            alpha = 0.2f * (2f - rippleScale), // Fade out as it expands
+                            alpha = 0.2f * (2f - rippleScale),
                             radius = size.minDimension / 2,
                         )
                     }
@@ -237,26 +239,23 @@ fun ConnectionStatusIndicator(
                     modifier = Modifier.size(18.dp),
                     tint = statusColor,
                 )
-            }
-            // Enhanced connection progress indicator for connecting states
-            else if (shouldPulse) {
+            } else if (shouldPulse) {
+                // Enhanced connection progress indicator for connecting states
                 CircularProgressIndicator(
                     modifier = Modifier.size(18.dp),
                     color = statusColor,
                     strokeWidth = 2.5.dp,
                 )
-            }
-            // Success indicator for connected state
-            else if (connectionState == ConnectionState.CONNECTED) {
+            } else if (connectionState == ConnectionState.CONNECTED) {
+                // Success indicator for connected state
                 Icon(
                     imageVector = androidx.compose.material.icons.Icons.Default.Check,
                     contentDescription = "Connected",
                     modifier = Modifier.size(16.dp),
                     tint = MaterialTheme.colorScheme.secondary,
                 )
-            }
-            // Error indicator for failed state
-            else if (connectionState == ConnectionState.FAILED) {
+            } else if (connectionState == ConnectionState.FAILED) {
+                // Error indicator for failed state
                 Icon(
                     imageVector = androidx.compose.material.icons.Icons.Default.Error,
                     contentDescription = "Connection failed",

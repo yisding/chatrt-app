@@ -290,7 +290,8 @@ class ChatRtService : Service() {
                 webRtcManager.muteVideo(true)
                 notificationManager?.updateServiceNotification(
                     _connectionState.value,
-                    VideoMode.AUDIO_ONLY, // Switched to audio-only for battery saving
+                    // Switched to audio-only for battery saving
+                    VideoMode.AUDIO_ONLY,
                     _isCallPaused.value,
                 )
             }

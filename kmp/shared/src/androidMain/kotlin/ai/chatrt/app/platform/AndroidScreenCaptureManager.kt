@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 package ai.chatrt.app.platform
 
 import android.content.Context

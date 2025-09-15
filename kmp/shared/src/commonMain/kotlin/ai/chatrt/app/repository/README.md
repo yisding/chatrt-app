@@ -141,7 +141,6 @@ Run tests with:
 The base implementations use in-memory storage. Platform-specific implementations should extend these classes to provide persistent storage:
 
 - **Android**: Use SharedPreferences or DataStore
-- **Desktop**: Use Properties files or platform-specific storage
 - **iOS**: Use UserDefaults or Core Data
 
 Example platform-specific implementation:

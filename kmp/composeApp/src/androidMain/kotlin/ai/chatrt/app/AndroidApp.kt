@@ -5,9 +5,13 @@ import ai.chatrt.app.ui.screens.SettingsScreen
 import ai.chatrt.app.ui.theme.ChatRtTheme
 import ai.chatrt.app.viewmodel.MainViewModel
 import ai.chatrt.app.viewmodel.SettingsViewModel
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.runtime.*
+import androidx.compose.animation.core.EaseInOutCubic
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -17,6 +21,7 @@ import org.koin.compose.koinInject
  * Android-specific App composable with navigation setup using Material 3 Expressive navigation
  * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5
  */
+@Suppress("FunctionName")
 @Composable
 fun AndroidApp() {
     ChatRtTheme {

@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 package ai.chatrt.app.ui.screens
 
 import ai.chatrt.app.models.*
@@ -7,8 +9,7 @@ import ai.chatrt.app.viewmodel.MainViewModel
 import ai.chatrt.app.viewmodel.SettingsViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
-import kotlin.test.Test
+// Removed unused imports
 
 /**
  * UI tests for MainScreen interactions and state updates
@@ -18,7 +19,7 @@ import kotlin.test.Test
  */
 class MainScreenTest {
     // @Test - Disabled for now as these are placeholder tests
-    fun mainScreen_displaysCorrectInitialState() {
+    fun mainScreenDisplaysCorrectInitialState() {
         // Test that the main screen displays the correct initial state
         // This would be implemented with actual Compose testing framework
         // For now, this is a placeholder test structure
@@ -45,7 +46,7 @@ class MainScreenTest {
     }
 
     // @Test - Disabled for now as these are placeholder tests
-    fun mainScreen_videoModeSelection_updatesCorrectly() {
+    fun mainScreenVideoModeSelectionUpdatesCorrectly() {
         // Test that video mode selection updates the UI correctly
         val mockChatRepository = MockChatRepository()
         val mockSettingsRepository = MockSettingsRepository()
@@ -72,7 +73,7 @@ class MainScreenTest {
     }
 
     // @Test - Disabled for now as these are placeholder tests
-    fun mainScreen_connectionButton_triggersCorrectAction() {
+    fun mainScreenConnectionButtonTriggersCorrectAction() {
         // Test that the connection button triggers the correct action
         val mockChatRepository = MockChatRepository()
         val mockSettingsRepository = MockSettingsRepository()
@@ -100,7 +101,7 @@ class MainScreenTest {
     }
 
     // @Test - Disabled for now as these are placeholder tests
-    fun mainScreen_errorDisplay_showsAndDismisses() {
+    fun mainScreenErrorDisplayShowsAndDismisses() {
         // Test that error display shows and can be dismissed
         val mockChatRepository = MockChatRepository()
         val mockSettingsRepository = MockSettingsRepository()
@@ -130,7 +131,7 @@ class MainScreenTest {
     }
 
     // @Test - Disabled for now as these are placeholder tests
-    fun mainScreen_logsDisplay_expandsAndCollapses() {
+    fun mainScreenLogsDisplayExpandsAndCollapses() {
         // Test that logs display can be expanded and collapsed
         val mockChatRepository = MockChatRepository()
         val mockSettingsRepository = MockSettingsRepository()
@@ -157,7 +158,7 @@ class MainScreenTest {
     }
 
     // @Test - Disabled for now as these are placeholder tests
-    fun mainScreen_optimizationSuggestion_showsAndCanBeApplied() {
+    fun mainScreenOptimizationSuggestionShowsAndCanBeApplied() {
         // Test that optimization suggestions show and can be applied
         val mockChatRepository = MockChatRepository()
         val mockSettingsRepository = MockSettingsRepository()

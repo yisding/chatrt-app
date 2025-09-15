@@ -1,7 +1,6 @@
 package ai.chatrt.app.logging
 
 import android.util.Log
-import kotlinx.coroutines.flow.Flow
 
 /**
  * Android-specific logger implementation that integrates with Android's Log system

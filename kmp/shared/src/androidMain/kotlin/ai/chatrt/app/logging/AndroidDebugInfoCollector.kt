@@ -1,6 +1,7 @@
 package ai.chatrt.app.logging
 
 import android.app.ActivityManager
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -82,6 +83,7 @@ class AndroidDebugInfoCollector(
             "Unknown (${e.message})"
         }
 
+    @SuppressLint("MissingPermission")
     private fun getNetworkType(): String =
         try {
             val network = connectivityManager.activeNetwork
@@ -135,7 +137,12 @@ class AndroidDebugInfoCollector(
     private fun getAppVersion(): String =
         try {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            "${packageInfo.versionName} (${packageInfo.longVersionCode})"
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                "${packageInfo.versionName} (${packageInfo.longVersionCode})"
+            } else {
+                @Suppress("DEPRECATION")
+                "${packageInfo.versionName} (${packageInfo.versionCode})"
+            }
         } catch (e: Exception) {
             "Unknown"
         }

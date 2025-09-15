@@ -78,11 +78,14 @@ interface BatteryMonitor {
  * Battery state information
  */
 data class BatteryState(
-    val level: Int, // 0-100
+    // 0-100
+    val level: Int,
     val isCharging: Boolean,
     val chargingType: ChargingType,
-    val temperature: Float, // Celsius
-    val voltage: Float, // Volts
+    // Celsius
+    val temperature: Float,
+    // Volts
+    val voltage: Float,
     val health: BatteryHealth,
     val powerSavingMode: PowerSavingMode,
 )

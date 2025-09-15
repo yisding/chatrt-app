@@ -1,6 +1,9 @@
+@file:Suppress("FunctionName")
+
 package ai.chatrt.app.ui.components
 
 import ai.chatrt.app.models.*
+import ai.chatrt.app.logging.LogLevel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*

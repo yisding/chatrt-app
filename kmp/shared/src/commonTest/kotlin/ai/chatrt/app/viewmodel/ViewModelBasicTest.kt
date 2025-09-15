@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 package ai.chatrt.app.viewmodel
 
 import ai.chatrt.app.models.*
@@ -162,8 +164,7 @@ class ViewModelBasicTest {
             _connectionState.value = state
         }
 
-        override suspend fun createCall(callRequest: CallRequest): Result<CallResponse> =
-            Result.success(CallResponse("test-id", "test-sdp", "success"))
+        override suspend fun createCall(callRequest: CallRequest): Result<CallResponse> = Result.success(CallResponse("test-id", "test-sdp", "success"))
 
         override fun observeConnectionState(): Flow<ConnectionState> = _connectionState.asStateFlow()
 

@@ -47,7 +47,8 @@ val sharedModule =
         // API Service
         single<ChatRtApiService> {
             ChatRtApiService(
-                baseUrl = "https://chatrt.val.town", // Default ChatRT backend URL
+                // Default ChatRT backend URL
+                baseUrl = "https://chatrt.val.town",
                 httpClient = get(),
             )
         }

@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.time.ExperimentalTime::class)
+
 package ai.chatrt.app.logging
 
 import android.content.Context
@@ -8,9 +10,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 import kotlin.time.Duration.Companion.days
 import kotlin.uuid.ExperimentalUuidApi
@@ -132,8 +132,9 @@ class AndroidLogStorageManager(
         withContext(Dispatchers.IO) {
             try {
                 val logs = loadLogs()
-                val logsToArchive = logs.filter { it.timestamp < beforeTimestamp }
-                val remainingLogs = logs.filter { it.timestamp >= beforeTimestamp }
+                val cutoff = beforeTimestamp.toEpochMilliseconds()
+                val logsToArchive = logs.filter { it.timestamp.toEpochMilliseconds() < cutoff }
+                val remainingLogs = logs.filter { it.timestamp.toEpochMilliseconds() >= cutoff }
 
                 if (logsToArchive.isEmpty()) {
                     return@withContext ""
@@ -201,7 +202,9 @@ class AndroidLogStorageManager(
         }
 
     private suspend fun archiveOldLogs() {
-        val cutoffTime = Clock.System.now() - config.autoArchiveAfterDays.days
+        val millisOffset = config.autoArchiveAfterDays * 24L * 60 * 60 * 1000
+        val nowMs = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+        val cutoffTime = kotlinx.datetime.Instant.fromEpochMilliseconds(nowMs - millisOffset)
         archiveLogs(cutoffTime)
     }
 

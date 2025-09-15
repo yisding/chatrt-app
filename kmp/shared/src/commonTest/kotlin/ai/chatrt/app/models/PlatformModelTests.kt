@@ -73,9 +73,11 @@ class PlatformModelTests {
     fun testResourceConstraintsSerialization() {
         val constraints =
             ResourceConstraints(
-                availableMemory = 1024L * 1024L * 512L, // 512MB
+                // 512MB
+                availableMemory = 1024L * 1024L * 512L,
                 cpuUsage = 75.5f,
-                networkBandwidth = 1000000L, // 1Mbps
+                // 1Mbps
+                networkBandwidth = 1000000L,
                 platformSpecific =
                     mapOf(
                         "batteryLevel" to "25",

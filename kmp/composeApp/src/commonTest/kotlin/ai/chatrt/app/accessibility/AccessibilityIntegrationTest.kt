@@ -5,8 +5,6 @@ import ai.chatrt.app.ui.components.*
 import ai.chatrt.app.ui.screens.MainScreen
 import ai.chatrt.app.ui.screens.SettingsScreen
 import ai.chatrt.app.ui.theme.ChatRtTheme
-import ai.chatrt.app.viewmodel.MainViewModel
-import ai.chatrt.app.viewmodel.SettingsViewModel
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,7 +16,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Rule
 import org.junit.Test
-import kotlin.test.assertTrue
 
 /**
  * Accessibility integration tests with Material 3 Expressive guidelines

@@ -318,8 +318,7 @@ class MockPermissionManager : PermissionManager {
 
     override suspend fun requestPermission(permission: PermissionType): Boolean = true
 
-    override suspend fun requestMultiplePermissions(permissions: List<PermissionType>): Map<PermissionType, Boolean> =
-        permissions.associateWith { true }
+    override suspend fun requestMultiplePermissions(permissions: List<PermissionType>): Map<PermissionType, Boolean> = permissions.associateWith { true }
 
     override fun shouldShowRationale(permission: PermissionType): Boolean = false
 

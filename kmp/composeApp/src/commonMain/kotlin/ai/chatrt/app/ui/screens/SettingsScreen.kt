@@ -17,7 +17,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.dp
  * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5
  */
 @OptIn(ExperimentalMaterial3Api::class)
+@Suppress("FunctionName")
 @Composable
 fun SettingsScreen(
     settingsViewModel: SettingsViewModel,
@@ -313,6 +313,7 @@ fun SettingsScreen(
 /**
  * Settings section with Material 3 Expressive styling
  */
+@Suppress("FunctionName")
 @Composable
 private fun SettingsSection(
     title: String,
@@ -362,6 +363,7 @@ private fun SettingsSection(
 /**
  * Video Mode preference with Material 3 Expressive radio buttons
  */
+@Suppress("FunctionName")
 @Composable
 private fun VideoModePreference(
     selectedMode: VideoMode,
@@ -438,6 +440,7 @@ private fun VideoModePreference(
 /**
  * Audio Quality preference with Material 3 Expressive radio buttons
  */
+@Suppress("FunctionName")
 @Composable
 private fun AudioQualityPreference(
     selectedQuality: AudioQuality,
@@ -514,6 +517,7 @@ private fun AudioQualityPreference(
 /**
  * Camera preference with Material 3 Expressive radio buttons
  */
+@Suppress("FunctionName")
 @Composable
 private fun CameraPreference(
     selectedCamera: CameraFacing,
@@ -588,6 +592,7 @@ private fun CameraPreference(
 /**
  * Server URL preference with Material 3 Expressive text fields and validation
  */
+@Suppress("FunctionName")
 @Composable
 private fun ServerUrlPreference(
     serverUrl: String,
@@ -647,6 +652,7 @@ private fun ServerUrlPreference(
 /**
  * Debug logging preference with Material 3 Expressive switches
  */
+@Suppress("FunctionName")
 @Composable
 private fun DebugLoggingPreference(
     enabled: Boolean,
@@ -686,6 +692,7 @@ private fun DebugLoggingPreference(
 /**
  * Reset to defaults preference with Material 3 Expressive buttons
  */
+@Suppress("FunctionName")
 @Composable
 private fun ResetToDefaultsPreference(
     onReset: () -> Unit,

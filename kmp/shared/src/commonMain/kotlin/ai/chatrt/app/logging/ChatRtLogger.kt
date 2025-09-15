@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.time.ExperimentalTime::class)
+
 package ai.chatrt.app.logging
 
 import kotlinx.coroutines.GlobalScope

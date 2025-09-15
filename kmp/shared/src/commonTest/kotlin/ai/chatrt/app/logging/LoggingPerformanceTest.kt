@@ -1,7 +1,6 @@
 package ai.chatrt.app.logging
 
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
 import kotlin.test.Test
 import kotlin.test.assertTrue
 import kotlin.time.measureTime

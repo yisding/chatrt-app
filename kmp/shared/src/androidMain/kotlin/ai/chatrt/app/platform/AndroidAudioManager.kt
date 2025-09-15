@@ -1,6 +1,9 @@
+@file:Suppress("PropertyName")
+
 package ai.chatrt.app.platform
 
 import ai.chatrt.app.models.*
+import android.annotation.SuppressLint
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothHeadset
@@ -191,7 +194,7 @@ class AndroidAudioManager(
         }
     }
 
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    @SuppressLint("MissingPermission")
     override suspend fun getAvailableAudioDevices(): List<AudioDevice> {
         val devices = mutableListOf<AudioDevice>()
 
@@ -208,16 +211,20 @@ class AndroidAudioManager(
         // Check for Bluetooth headset
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
             bluetoothHeadset?.let { headset ->
-                val connectedDevices = headset.connectedDevices
-                connectedDevices.forEach { device ->
-                    devices.add(
-                        AudioDevice(
-                            id = device.address,
-                            name = device.name ?: "Bluetooth Headset",
-                            type = AudioDeviceType.BLUETOOTH_HEADSET,
-                            isDefault = false,
-                        ),
-                    )
+                try {
+                    val connectedDevices = headset.connectedDevices
+                    connectedDevices.forEach { device ->
+                        devices.add(
+                            AudioDevice(
+                                id = device.address,
+                                name = device.name ?: "Bluetooth Headset",
+                                type = AudioDeviceType.BLUETOOTH_HEADSET,
+                                isDefault = false,
+                            ),
+                        )
+                    }
+                } catch (_: SecurityException) {
+                    // Permission might be revoked at runtime; ignore bluetooth devices
                 }
             }
         }
@@ -254,7 +261,10 @@ class AndroidAudioManager(
 
     override suspend fun getCurrentAudioDevice(): AudioDevice? = _currentAudioDevice.value
 
-    override fun observeAudioDeviceChanges(): Flow<AudioDevice> = _audioDeviceChanges.asStateFlow().filterNotNull()
+    override fun observeAudioDeviceChanges(): Flow<AudioDevice> =
+        _audioDeviceChanges
+            .asStateFlow()
+            .filterNotNull()
 
     override suspend fun setAudioQuality(quality: AudioQuality) {
         // Configure audio parameters based on quality
@@ -323,10 +333,16 @@ class AndroidAudioManager(
 
                                 when (state) {
                                     BluetoothProfile.STATE_CONNECTED -> {
-                                        handleBluetoothDeviceConnected(device)
+                                        val appCtx = this@AndroidAudioManager.context
+                                        if (ContextCompat.checkSelfPermission(appCtx, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                                            handleBluetoothDeviceConnected(device)
+                                        }
                                     }
                                     BluetoothProfile.STATE_DISCONNECTED -> {
-                                        handleBluetoothDeviceDisconnected(device)
+                                        val appCtx = this@AndroidAudioManager.context
+                                        if (ContextCompat.checkSelfPermission(appCtx, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                                            handleBluetoothDeviceDisconnected(device)
+                                        }
                                     }
                                 }
                             }
@@ -417,8 +433,11 @@ class AndroidAudioManager(
      * Handle Bluetooth device connection
      * Requirement: 5.3 - Bluetooth headphone connection with audio routing
      */
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    @SuppressLint("MissingPermission")
     private suspend fun handleBluetoothDeviceConnected(device: android.bluetooth.BluetoothDevice?) {
+        if (ContextCompat.checkSelfPermission(this@AndroidAudioManager.context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            return
+        }
         device?.let { btDevice ->
             val audioDevice =
                 AudioDevice(
@@ -546,5 +565,4 @@ class AndroidAudioManager(
 /**
  * Factory function for creating Android audio manager
  */
-actual fun createAudioManager(): AudioManager =
-    throw IllegalStateException("Android AudioManager requires Context. Use AndroidAudioManager(context) directly.")
+actual fun createAudioManager(): AudioManager = throw IllegalStateException("Android AudioManager requires Context. Use AndroidAudioManager(context) directly.")

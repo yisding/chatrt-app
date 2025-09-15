@@ -1,7 +1,10 @@
+@file:Suppress("PropertyName")
+
 package ai.chatrt.app.platform
 
 import ai.chatrt.app.models.NetworkQuality
 import android.content.Context
+import android.annotation.SuppressLint
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -44,6 +47,7 @@ class AndroidNetworkMonitor(
         updateNetworkState()
     }
 
+    @SuppressLint("MissingPermission")
     override suspend fun startMonitoring() {
         val request =
             NetworkRequest
@@ -53,6 +57,7 @@ class AndroidNetworkMonitor(
         connectivityManager.registerNetworkCallback(request, networkCallback)
     }
 
+    @SuppressLint("MissingPermission")
     override suspend fun stopMonitoring() {
         connectivityManager.unregisterNetworkCallback(networkCallback)
     }
@@ -65,6 +70,7 @@ class AndroidNetworkMonitor(
 
     override fun observeNetworkQuality(): Flow<NetworkQuality> = _networkQuality.asStateFlow()
 
+    @SuppressLint("MissingPermission")
     override suspend fun getNetworkCapabilities(): ai.chatrt.app.platform.NetworkCapabilities? {
         val activeNetwork = connectivityManager.activeNetwork ?: return null
         val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return null
@@ -72,7 +78,8 @@ class AndroidNetworkMonitor(
         return ai.chatrt.app.platform.NetworkCapabilities(
             downloadBandwidth = capabilities.linkDownstreamBandwidthKbps * 1000L,
             uploadBandwidth = capabilities.linkUpstreamBandwidthKbps * 1000L,
-            latency = 0, // Would need to measure
+            // Would need to measure
+            latency = 0,
             supportsInternet = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET),
             isValidated = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED),
         )
@@ -94,11 +101,16 @@ class AndroidNetworkMonitor(
     override suspend fun measureBandwidth(): BandwidthInfo? {
         // Measure network bandwidth
         return BandwidthInfo(
-            downloadSpeed = 10_000_000L, // 10 Mbps placeholder
-            uploadSpeed = 5_000_000L, // 5 Mbps placeholder
-            latency = 50, // 50ms placeholder
-            jitter = 10, // 10ms placeholder
-            packetLoss = 0.1f, // 0.1% placeholder
+            // 10 Mbps placeholder
+            downloadSpeed = 10_000_000L,
+            // 5 Mbps placeholder
+            uploadSpeed = 5_000_000L,
+            // 50ms placeholder
+            latency = 50,
+            // 10ms placeholder
+            jitter = 10,
+            // 0.1% placeholder
+            packetLoss = 0.1f,
         )
     }
 
@@ -106,6 +118,7 @@ class AndroidNetworkMonitor(
         stopMonitoring()
     }
 
+    @SuppressLint("MissingPermission")
     private fun updateNetworkState() {
         val activeNetwork = connectivityManager.activeNetwork
         val capabilities = activeNetwork?.let { connectivityManager.getNetworkCapabilities(it) }
@@ -128,7 +141,8 @@ class AndroidNetworkMonitor(
                 isConnected = isConnected,
                 networkType = networkType,
                 isMetered = isMetered,
-                signalStrength = -1, // Would need to get actual signal strength
+                // Would need to get actual signal strength
+                signalStrength = -1,
             )
     }
 
@@ -137,10 +151,14 @@ class AndroidNetworkMonitor(
 
         _networkQuality.value =
             when {
-                downstreamBandwidth >= 10000 -> NetworkQuality.EXCELLENT // 10+ Mbps
-                downstreamBandwidth >= 5000 -> NetworkQuality.GOOD // 5-10 Mbps
-                downstreamBandwidth >= 1000 -> NetworkQuality.FAIR // 1-5 Mbps
-                else -> NetworkQuality.POOR // < 1 Mbps
+                // 10+ Mbps
+                downstreamBandwidth >= 10000 -> NetworkQuality.EXCELLENT
+                // 5-10 Mbps
+                downstreamBandwidth >= 5000 -> NetworkQuality.GOOD
+                // 1-5 Mbps
+                downstreamBandwidth >= 1000 -> NetworkQuality.FAIR
+                // < 1 Mbps
+                else -> NetworkQuality.POOR
             }
     }
 }

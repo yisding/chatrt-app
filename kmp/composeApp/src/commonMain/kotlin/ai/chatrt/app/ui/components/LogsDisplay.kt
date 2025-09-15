@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package ai.chatrt.app.ui.components
 
 import ai.chatrt.app.logging.LogEntry
@@ -279,8 +281,9 @@ private fun LogsContent(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            // Show only the last 50 logs for performance
             items(
-                items = logs.takeLast(50), // Show only the last 50 logs for performance
+                items = logs.takeLast(50),
                 key = { log -> log.id },
             ) { log ->
                 LogEntry(

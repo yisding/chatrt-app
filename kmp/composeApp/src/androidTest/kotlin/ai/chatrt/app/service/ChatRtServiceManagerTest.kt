@@ -3,7 +3,6 @@ package ai.chatrt.app.service
 import ai.chatrt.app.models.ConnectionState
 import ai.chatrt.app.models.VideoMode
 import android.content.Context
-import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ServiceTestRule
@@ -16,8 +15,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+// Removed unused imports
 
 /**
  * Tests for ChatRtServiceManager

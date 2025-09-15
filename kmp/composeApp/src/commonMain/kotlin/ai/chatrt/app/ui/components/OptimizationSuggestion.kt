@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package ai.chatrt.app.ui.components
 
 import ai.chatrt.app.models.OptimizationReason

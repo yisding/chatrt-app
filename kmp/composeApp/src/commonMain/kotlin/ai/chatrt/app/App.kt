@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package ai.chatrt.app
 
 import ai.chatrt.app.ui.screens.MainScreen

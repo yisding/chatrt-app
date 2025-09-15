@@ -1,6 +1,5 @@
 package ai.chatrt.app.logging
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
 
 /**
@@ -26,7 +25,8 @@ interface LogStorageManager {
  * Configuration for log storage
  */
 data class LogStorageConfig(
-    val maxStorageSize: Long = 10 * 1024 * 1024, // 10MB
+    // 10MB
+    val maxStorageSize: Long = 10 * 1024 * 1024,
     val maxArchives: Int = 5,
     val autoArchiveAfterDays: Int = 7,
     val compressionEnabled: Boolean = true,

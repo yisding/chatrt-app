@@ -3,7 +3,6 @@ package ai.chatrt.app.logging
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.datetime.Clock
 
 /**
  * Specialized logger for WebRTC events and connection diagnostics

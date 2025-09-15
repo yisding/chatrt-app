@@ -248,8 +248,7 @@ private class IosBatteryMonitor : BatteryMonitor {
 }
 
 private class IosPlatformManager : PlatformManager {
-    override suspend fun requestPermissions(permissions: List<Permission>): PermissionResult =
-        PermissionResult(permissions.associateWith { false })
+    override suspend fun requestPermissions(permissions: List<Permission>): PermissionResult = PermissionResult(permissions.associateWith { false })
 
     override fun createWebRtcManager(): WebRtcManager = IosWebRtcManager()
 
@@ -270,7 +269,12 @@ private class IosPlatformManager : PlatformManager {
     override suspend fun handleSystemInterruption(): SystemInterruption? = null
 
     override suspend fun getResourceConstraints(): ResourceConstraints =
-        ResourceConstraints(availableMemory = 0, cpuUsage = 0f, networkBandwidth = 0L, platformSpecific = emptyMap())
+        ResourceConstraints(
+            availableMemory = 0,
+            cpuUsage = 0f,
+            networkBandwidth = 0L,
+            platformSpecific = emptyMap(),
+        )
 
     override suspend fun createPlatformOptimization(): PlatformOptimization? = null
 }
