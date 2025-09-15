@@ -1,9 +1,10 @@
 package ai.chatrt.app.models
 
+import ai.chatrt.app.logging.LogLevel
 import kotlinx.serialization.Serializable
 
 /**
- * Represents a log entry with timestamp and message
+ * Represents a lightweight log entry for repository/UI use.
  */
 @Serializable
 data class LogEntry(
@@ -11,14 +12,3 @@ data class LogEntry(
     val message: String,
     val level: LogLevel = LogLevel.INFO,
 )
-
-/**
- * Log levels for categorizing log entries
- */
-@Serializable
-enum class LogLevel {
-    DEBUG,
-    INFO,
-    WARNING,
-    ERROR,
-}

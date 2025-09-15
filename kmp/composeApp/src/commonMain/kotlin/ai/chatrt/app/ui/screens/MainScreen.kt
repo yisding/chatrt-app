@@ -20,6 +20,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 /**
  * Main screen UI with ChatRT functionality using Material 3 Expressive theme
@@ -39,6 +41,8 @@ fun MainScreen(
     val connectionState by mainViewModel.connectionState.collectAsState()
     val videoMode by mainViewModel.videoMode.collectAsState()
     val logs by mainViewModel.logs.collectAsState()
+    val webRtcEvents by mainViewModel.webRtcEvents.collectAsState()
+    val connectionDiagnostics by mainViewModel.connectionDiagnostics.collectAsState()
     val error by mainViewModel.error.collectAsState()
     val platformOptimization by mainViewModel.platformOptimization.collectAsState()
     val isCallPaused by mainViewModel.isCallPaused.collectAsState()
@@ -46,6 +50,7 @@ fun MainScreen(
 
     // Local UI state
     var isLogsExpanded by remember { mutableStateOf(false) }
+    var isDebugPanelExpanded by remember { mutableStateOf(false) }
 
     // Motion system animations
     val scrollState = rememberScrollState()
@@ -161,6 +166,42 @@ fun MainScreen(
                 onToggleExpanded = { isLogsExpanded = !isLogsExpanded },
                 debugLoggingEnabled = settingsViewModel.debugLogging.collectAsState().value,
             )
+
+            // Comprehensive Debug Panel with WebRTC events and diagnostics
+            AnimatedVisibility(
+                visible = settingsViewModel.debugLogging.collectAsState().value,
+                enter = slideInVertically() + fadeIn(),
+                exit = slideOutVertically() + fadeOut(),
+            ) {
+                DebugPanel(
+                    logs = logs,
+                    webRtcEvents = webRtcEvents,
+                    diagnostics = connectionDiagnostics,
+                    isExpanded = isDebugPanelExpanded,
+                    onToggleExpanded = { isDebugPanelExpanded = !isDebugPanelExpanded },
+                    onExportLogs = {
+                        // Launch coroutine to export logs
+                        kotlinx.coroutines.MainScope().launch {
+                            try {
+                                val exportedData = mainViewModel.exportDebugInfo()
+                                // In a real app, you'd save this to a file or share it
+                                println("Debug info exported: ${exportedData.take(200)}...")
+                            } catch (e: Exception) {
+                                println("Failed to export debug info: ${e.message}")
+                            }
+                        }
+                    },
+                    onClearLogs = {
+                        kotlinx.coroutines.MainScope().launch {
+                            try {
+                                mainViewModel.clearLogs()
+                            } catch (e: Exception) {
+                                println("Failed to clear logs: ${e.message}")
+                            }
+                        }
+                    },
+                )
+            }
 
             // Add bottom padding for better scrolling experience
             Spacer(modifier = Modifier.height(32.dp))

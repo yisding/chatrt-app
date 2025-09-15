@@ -1,10 +1,10 @@
 package ai.chatrt.app.repository
 
+import ai.chatrt.app.logging.LogLevel
 import ai.chatrt.app.models.CallRequest
 import ai.chatrt.app.models.CallResponse
 import ai.chatrt.app.models.ConnectionState
 import ai.chatrt.app.models.LogEntry
-import ai.chatrt.app.models.LogLevel
 import ai.chatrt.app.models.VideoMode
 import ai.chatrt.app.network.ChatRtApiService
 import ai.chatrt.app.platform.IceConnectionState

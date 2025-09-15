@@ -36,7 +36,7 @@ class ErrorHandler {
 
         // Handle automatic retry for retryable errors
         if (error.isRetryable && onRetry != null) {
-            val attempts = retryAttempts.getOrDefault(error.errorCode, 0)
+            val attempts = retryAttempts[error.errorCode] ?: 0
             if (attempts < maxRetryAttempts) {
                 retryAttempts[error.errorCode] = attempts + 1
                 // Could implement automatic retry with exponential backoff here
@@ -222,7 +222,7 @@ class ErrorHandler {
         minimumRequired: NetworkQuality = NetworkQuality.FAIR,
         onQualityReduction: (() -> Unit)? = null,
     ) {
-        if (currentQuality < minimumRequired) {
+        if (currentQuality.ordinal < minimumRequired.ordinal) {
             val error = ChatRtError.NetworkQualityError(currentQuality, minimumRequired)
             handleError(error, "Network Quality")
 
@@ -250,7 +250,7 @@ class ErrorHandler {
     fun retryCurrentError(onRetry: () -> Unit): Boolean {
         val error = _currentError.value
         return if (error?.isRetryable == true) {
-            val attempts = retryAttempts.getOrDefault(error.errorCode, 0)
+            val attempts = retryAttempts[error.errorCode] ?: 0
             if (attempts < maxRetryAttempts) {
                 retryAttempts[error.errorCode] = attempts + 1
                 onRetry()
@@ -280,13 +280,13 @@ class ErrorHandler {
     /**
      * Gets retry attempts for a specific error code
      */
-    fun getRetryAttempts(errorCode: String): Int = retryAttempts.getOrDefault(errorCode, 0)
+    fun getRetryAttempts(errorCode: String): Int = retryAttempts[errorCode] ?: 0
 
     /**
      * Checks if an error can be retried
      */
     fun canRetry(error: ChatRtError): Boolean {
-        val attempts = retryAttempts.getOrDefault(error.errorCode, 0)
+        val attempts = retryAttempts[error.errorCode] ?: 0
         return error.isRetryable && attempts < maxRetryAttempts
     }
 
@@ -340,7 +340,7 @@ class ErrorHandler {
                     kotlinx.datetime.Clock.System
                         .now()
                         .toEpochMilliseconds(),
-                retryAttempts = retryAttempts.getOrDefault(error.errorCode, 0),
+                retryAttempts = retryAttempts[error.errorCode] ?: 0,
             )
 
         val currentHistory = _errorHistory.value.toMutableList()

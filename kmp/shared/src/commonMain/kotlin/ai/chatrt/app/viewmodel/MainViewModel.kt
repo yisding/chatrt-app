@@ -1,5 +1,10 @@
 package ai.chatrt.app.viewmodel
 
+import ai.chatrt.app.logging.DebugInfoCollector
+import ai.chatrt.app.logging.LogCategory
+import ai.chatrt.app.logging.LogLevel
+import ai.chatrt.app.logging.Logger
+import ai.chatrt.app.logging.WebRtcEventLogger
 import ai.chatrt.app.models.*
 import ai.chatrt.app.platform.*
 import ai.chatrt.app.repository.ChatRepository
@@ -18,6 +23,9 @@ import kotlinx.datetime.Clock
  */
 class MainViewModel(
     private val chatRepository: ChatRepository,
+    private val logger: Logger,
+    private val webRtcEventLogger: WebRtcEventLogger,
+    private val debugInfoCollector: DebugInfoCollector,
     private val audioManager: AudioManager? = null,
     private val permissionManager: PermissionManager? = null,
     private val networkMonitor: NetworkMonitor? = null,
@@ -30,9 +38,36 @@ class MainViewModel(
     private val _videoMode = MutableStateFlow(VideoMode.AUDIO_ONLY)
     val videoMode: StateFlow<VideoMode> = _videoMode.asStateFlow()
 
-    // Logs management
-    private val _logs = MutableStateFlow<List<LogEntry>>(emptyList())
-    val logs: StateFlow<List<LogEntry>> = _logs.asStateFlow()
+    // Logs management - using comprehensive logging system
+    val logs =
+        logger.getLogs().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList(),
+        )
+
+    // WebRTC events and diagnostics
+    val webRtcEvents =
+        webRtcEventLogger.eventsFlow.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList(),
+        )
+
+    val connectionDiagnostics =
+        webRtcEventLogger.diagnosticsFlow.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList(),
+        )
+
+    // Debug information
+    val debugInfo =
+        debugInfoCollector.collectDebugInfo().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null,
+        )
 
     // Network quality monitoring
     private val _networkQuality = MutableStateFlow(NetworkQuality.GOOD)
@@ -74,18 +109,12 @@ class MainViewModel(
                 .observeConnectionState()
                 .collect { state ->
                     _connectionState.value = state
-                    addLog("Connection state changed to: $state", LogLevel.INFO)
+                    logger.info("Connection", "Connection state changed to: $state")
                 }
         }
 
-        // Observe logs from repository
-        viewModelScope.launch {
-            chatRepository
-                .observeLogs()
-                .collect { newLogs ->
-                    _logs.value = newLogs
-                }
-        }
+        // Initialize logging
+        logger.info("MainViewModel", "ChatRT MainViewModel initialized")
 
         // Observe audio device changes
         audioManager?.let { manager ->
@@ -124,14 +153,14 @@ class MainViewModel(
      */
     fun startConnection() {
         if (_connectionState.value == ConnectionState.CONNECTED) {
-            addLog("Connection already active", LogLevel.WARNING)
+            logger.warning("Connection", "Connection already active")
             return
         }
 
         viewModelScope.launch {
             try {
                 _connectionState.value = ConnectionState.CONNECTING
-                addLog("Starting connection with video mode: ${_videoMode.value}", LogLevel.INFO)
+                logger.info("Connection", "Starting connection with video mode: ${_videoMode.value}")
 
                 // Create call request with current video mode
                 val callRequest = createCallRequest()
@@ -140,7 +169,8 @@ class MainViewModel(
                 result.fold(
                     onSuccess = { response ->
                         currentCallId = response.callId
-                        addLog("Call created successfully with ID: ${response.callId}", LogLevel.INFO)
+                        logger.info("Connection", "Call created successfully with ID: ${response.callId}")
+                        webRtcEventLogger.logConnectionCreated(response.callId)
 
                         // Start monitoring the connection
                         startConnectionMonitoring(response.callId)
@@ -152,7 +182,7 @@ class MainViewModel(
                             // Retry connection
                             startConnection()
                         }
-                        addLog("Failed to create call: ${exception.message}", LogLevel.ERROR)
+                        logger.error("Connection", "Failed to create call: ${exception.message}", exception)
                     },
                 )
             } catch (e: Exception) {
@@ -162,7 +192,7 @@ class MainViewModel(
                     // Retry connection
                     startConnection()
                 }
-                addLog("Unexpected error during connection: ${e.message}", LogLevel.ERROR)
+                logger.error("Connection", "Unexpected error during connection: ${e.message}", e)
             }
         }
     }
@@ -173,7 +203,7 @@ class MainViewModel(
     fun stopConnection() {
         viewModelScope.launch {
             try {
-                addLog("Stopping connection", LogLevel.INFO)
+                logger.info("Connection", "Stopping connection")
 
                 val result = chatRepository.stopConnection()
                 result.fold(
@@ -181,18 +211,19 @@ class MainViewModel(
                         _connectionState.value = ConnectionState.DISCONNECTED
                         currentCallId = null
                         _isCallPaused.value = false
-                        addLog("Connection stopped successfully", LogLevel.INFO)
+                        logger.info("Connection", "Connection stopped successfully")
+                        currentCallId?.let { webRtcEventLogger.logConnectionClosed(it) }
                     },
                     onFailure = { exception ->
                         val error = errorHandler.mapExceptionToChatRtError(exception, "Disconnection")
                         errorHandler.handleError(error, "Disconnection")
-                        addLog("Error stopping connection: ${exception.message}", LogLevel.ERROR)
+                        logger.error("Connection", "Error stopping connection: ${exception.message}", exception)
                     },
                 )
             } catch (e: Exception) {
                 val error = errorHandler.mapExceptionToChatRtError(e, "Disconnection")
                 errorHandler.handleError(error, "Disconnection")
-                addLog("Unexpected error stopping connection: ${e.message}", LogLevel.ERROR)
+                logger.error("Connection", "Unexpected error stopping connection: ${e.message}", e)
             }
         }
     }
@@ -203,11 +234,11 @@ class MainViewModel(
     fun setVideoMode(mode: VideoMode) {
         val previousMode = _videoMode.value
         _videoMode.value = mode
-        addLog("Video mode changed from $previousMode to $mode", LogLevel.INFO)
+        logger.info("VideoMode", "Video mode changed from $previousMode to $mode")
 
         // If we're connected, we might need to restart the connection with new mode
         if (_connectionState.value == ConnectionState.CONNECTED) {
-            addLog("Restarting connection with new video mode", LogLevel.INFO)
+            logger.info("VideoMode", "Restarting connection with new video mode")
             restartConnectionWithNewMode()
         }
     }
@@ -217,11 +248,11 @@ class MainViewModel(
      */
     fun switchCamera() {
         if (_videoMode.value != VideoMode.WEBCAM) {
-            addLog("Camera switch only available in webcam mode", LogLevel.WARNING)
+            logger.warning("Camera", "Camera switch only available in webcam mode")
             return
         }
 
-        addLog("Switching camera", LogLevel.INFO)
+        logger.info("Camera", "Switching camera")
         // This will be handled by platform-specific implementations
         // For now, just log the action
     }
@@ -231,7 +262,7 @@ class MainViewModel(
      */
     fun handleAppBackground() {
         if (_connectionState.value == ConnectionState.CONNECTED) {
-            addLog("App going to background, maintaining connection", LogLevel.INFO)
+            logger.info("Lifecycle", "App going to background, maintaining connection")
             // Connection should continue in background via service
         }
     }
@@ -241,7 +272,7 @@ class MainViewModel(
      */
     fun handleAppForeground() {
         if (_connectionState.value == ConnectionState.CONNECTED) {
-            addLog("App returning to foreground", LogLevel.INFO)
+            logger.info("Lifecycle", "App returning to foreground")
         }
     }
 
@@ -253,20 +284,20 @@ class MainViewModel(
             InterruptionType.PHONE_CALL -> {
                 if (interruption.shouldPause && _connectionState.value == ConnectionState.CONNECTED) {
                     _isCallPaused.value = true
-                    addLog("ChatRT call paused due to phone call", LogLevel.INFO)
+                    logger.info("Interruption", "ChatRT call paused due to phone call")
                 }
             }
             InterruptionType.NETWORK_LOSS -> {
                 if (_connectionState.value == ConnectionState.CONNECTED) {
                     _connectionState.value = ConnectionState.RECONNECTING
-                    addLog("Network lost, attempting to reconnect", LogLevel.WARNING)
+                    logger.warning("Network", "Network lost, attempting to reconnect")
                 }
             }
             InterruptionType.LOW_POWER_MODE -> {
                 suggestPowerOptimization()
             }
             else -> {
-                addLog("System interruption: ${interruption.type}", LogLevel.INFO)
+                logger.info("Interruption", "System interruption: ${interruption.type}")
             }
         }
     }
@@ -277,7 +308,7 @@ class MainViewModel(
     fun resumeAfterInterruption() {
         if (_isCallPaused.value) {
             _isCallPaused.value = false
-            addLog("Resuming ChatRT call after interruption", LogLevel.INFO)
+            logger.info("Interruption", "Resuming ChatRT call after interruption")
         }
     }
 
@@ -287,7 +318,7 @@ class MainViewModel(
     fun handleNetworkQualityChange(quality: NetworkQuality) {
         val previousQuality = _networkQuality.value
         _networkQuality.value = quality
-        addLog("Network quality changed from $previousQuality to $quality", LogLevel.INFO)
+        logger.info("Network", "Network quality changed from $previousQuality to $quality")
 
         // Suggest optimization based on network quality
         if (quality == NetworkQuality.POOR) {
@@ -299,7 +330,7 @@ class MainViewModel(
                     reason = OptimizationReason.POOR_NETWORK,
                 )
             _platformOptimization.value = optimization
-            addLog("Suggesting audio-only mode due to poor network", LogLevel.WARNING)
+            logger.warning("Optimization", "Suggesting audio-only mode due to poor network")
         }
     }
 
@@ -307,7 +338,7 @@ class MainViewModel(
      * Handles resource constraints
      */
     fun handleResourceConstraints(constraints: ResourceConstraints) {
-        addLog("Resource constraints updated - Memory: ${constraints.availableMemory}MB, CPU: ${constraints.cpuUsage}%", LogLevel.DEBUG)
+        logger.debug("System", "Resource constraints updated - Memory: ${constraints.availableMemory}MB, CPU: ${constraints.cpuUsage}%")
 
         // Suggest optimization based on resource constraints
         if (constraints.availableMemory < 100_000_000) { // Less than 100MB
@@ -319,7 +350,7 @@ class MainViewModel(
                     reason = OptimizationReason.LOW_MEMORY,
                 )
             _platformOptimization.value = optimization
-            addLog("Suggesting optimization due to low memory", LogLevel.WARNING)
+            logger.warning("Optimization", "Suggesting optimization due to low memory")
         }
     }
 
@@ -327,7 +358,7 @@ class MainViewModel(
      * Applies platform optimization
      */
     fun applyPlatformOptimization(optimization: PlatformOptimization) {
-        addLog("Applying platform optimization: ${optimization.reason}", LogLevel.INFO)
+        logger.info("Optimization", "Applying platform optimization: ${optimization.reason}")
 
         // Apply the recommended video mode
         if (optimization.recommendedVideoMode != _videoMode.value) {
@@ -343,7 +374,7 @@ class MainViewModel(
      */
     fun dismissOptimization() {
         _platformOptimization.value = null
-        addLog("Platform optimization suggestion dismissed", LogLevel.INFO)
+        logger.info("Optimization", "Platform optimization suggestion dismissed")
     }
 
     /**
@@ -374,7 +405,7 @@ class MainViewModel(
                 }
 
             if (!canRetry) {
-                addLog("Maximum retry attempts reached for ${currentError.errorCode}", LogLevel.WARNING)
+                logger.warning("Error", "Maximum retry attempts reached for ${currentError.errorCode}")
             }
         }
     }
@@ -396,11 +427,11 @@ class MainViewModel(
                 error = error,
                 context = context,
                 onRecoverySuccess = {
-                    addLog("Automatic recovery successful for ${error.errorCode}", LogLevel.INFO)
+                    logger.info("Recovery", "Automatic recovery successful for ${error.errorCode}")
                     onRetry?.invoke()
                 },
                 onRecoveryFailed = { recoveryError ->
-                    addLog("Automatic recovery failed for ${error.errorCode}: ${recoveryError.userMessage}", LogLevel.WARNING)
+                    logger.warning("Recovery", "Automatic recovery failed for ${error.errorCode}: ${recoveryError.userMessage}")
                 },
             )
         }
@@ -432,7 +463,7 @@ class MainViewModel(
             handleErrorWithRecovery(deviceError, "Audio Device Change")
         }
 
-        addLog("Audio device changed to: ${device.name} (${device.type})", LogLevel.INFO)
+        logger.info("Audio", "Audio device changed to: ${device.name} (${device.type})")
     }
 
     /**
@@ -448,9 +479,9 @@ class MainViewModel(
                 }
             }
             _connectionState.value = ConnectionState.RECONNECTING
-            addLog("Network connection lost, attempting to reconnect", LogLevel.WARNING)
+            logger.warning("Network", "Network connection lost, attempting to reconnect")
         } else if (networkState.isConnected && _connectionState.value == ConnectionState.RECONNECTING) {
-            addLog("Network connection restored", LogLevel.INFO)
+            logger.info("Network", "Network connection restored")
             // Connection will be restored by the recovery mechanism
         }
     }
@@ -471,12 +502,12 @@ class MainViewModel(
                     PermissionType.CAMERA -> {
                         // Automatic fallback to audio-only mode (Requirement 2.6)
                         setVideoMode(VideoMode.AUDIO_ONLY)
-                        addLog("Switched to audio-only mode due to camera permission denial", LogLevel.INFO)
+                        logger.info("Permission", "Switched to audio-only mode due to camera permission denial")
                     }
                     PermissionType.SCREEN_CAPTURE -> {
                         // Automatic fallback to camera mode (Requirement 3.6)
                         setVideoMode(VideoMode.WEBCAM)
-                        addLog("Switched to camera mode due to screen capture permission denial", LogLevel.INFO)
+                        logger.info("Permission", "Switched to camera mode due to screen capture permission denial")
                     }
                     else -> {
                         // Handle other permission types
@@ -499,7 +530,7 @@ class MainViewModel(
             cameraId = cameraId,
             onFallbackToAudio = {
                 setVideoMode(VideoMode.AUDIO_ONLY)
-                addLog("Switched to audio-only mode due to camera error", LogLevel.INFO)
+                logger.info("Camera", "Switched to audio-only mode due to camera error")
             },
         )
     }
@@ -517,7 +548,7 @@ class MainViewModel(
             details = details,
             onFallbackToCamera = {
                 setVideoMode(VideoMode.WEBCAM)
-                addLog("Switched to camera mode due to screen capture error", LogLevel.INFO)
+                logger.info("ScreenCapture", "Switched to camera mode due to screen capture error")
             },
         )
     }
@@ -531,11 +562,11 @@ class MainViewModel(
             callState = callState,
             onPause = {
                 _isCallPaused.value = true
-                addLog("ChatRT call paused due to phone call", LogLevel.INFO)
+                logger.info("PhoneCall", "ChatRT call paused due to phone call")
             },
             onResume = {
                 _isCallPaused.value = false
-                addLog("ChatRT call resumed after phone call", LogLevel.INFO)
+                logger.info("PhoneCall", "ChatRT call resumed after phone call")
             },
         )
     }
@@ -570,28 +601,22 @@ class MainViewModel(
     }
 
     /**
-     * Adds a log entry with current timestamp
+     * Exports debug information including logs, WebRTC events, and diagnostics
      */
-    private fun addLog(
-        message: String,
-        level: LogLevel = LogLevel.INFO,
-    ) {
-        val logEntry =
-            LogEntry(
-                timestamp = Clock.System.now().toEpochMilliseconds(),
-                message = message,
-                level = level,
-            )
+    suspend fun exportDebugInfo(): String = debugInfoCollector.exportDebugInfo()
 
-        val currentLogs = _logs.value.toMutableList()
-        currentLogs.add(logEntry)
+    /**
+     * Clears all logs
+     */
+    suspend fun clearLogs() {
+        logger.clearLogs()
+    }
 
-        // Keep only the last 100 log entries to prevent memory issues
-        if (currentLogs.size > 100) {
-            currentLogs.removeAt(0)
-        }
-
-        _logs.value = currentLogs
+    /**
+     * Rotates logs to manage storage
+     */
+    suspend fun rotateLogs() {
+        logger.rotateLogs()
     }
 
     /**
@@ -623,12 +648,12 @@ class MainViewModel(
         val result = chatRepository.startConnectionMonitoring(callId)
         result.fold(
             onSuccess = {
-                addLog("Connection monitoring started for call: $callId", LogLevel.INFO)
+                logger.info("Monitoring", "Connection monitoring started for call: $callId")
             },
             onFailure = { exception ->
                 val error = errorHandler.mapExceptionToChatRtError(exception, "Connection Monitoring")
                 errorHandler.handleError(error, "Connection Monitoring")
-                addLog("Failed to start connection monitoring: ${exception.message}", LogLevel.ERROR)
+                logger.error("Monitoring", "Failed to start connection monitoring: ${exception.message}", exception)
             },
         )
     }
@@ -661,7 +686,7 @@ class MainViewModel(
                 reason = OptimizationReason.LOW_BATTERY,
             )
         _platformOptimization.value = optimization
-        addLog("Suggesting power optimization due to low battery", LogLevel.WARNING)
+        logger.warning("Battery", "Suggesting power optimization due to low battery")
     }
 
     override fun onCleared() {

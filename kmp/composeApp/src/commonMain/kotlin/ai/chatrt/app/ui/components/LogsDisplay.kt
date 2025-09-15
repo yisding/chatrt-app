@@ -1,7 +1,7 @@
 package ai.chatrt.app.ui.components
 
-import ai.chatrt.app.models.LogEntry
-import ai.chatrt.app.models.LogLevel
+import ai.chatrt.app.logging.LogEntry
+import ai.chatrt.app.logging.LogLevel
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -281,7 +281,7 @@ private fun LogsContent(
         ) {
             items(
                 items = logs.takeLast(50), // Show only the last 50 logs for performance
-                key = { log -> "${log.timestamp}-${log.message.hashCode()}" },
+                key = { log -> log.id },
             ) { log ->
                 LogEntry(
                     log = log,
@@ -401,10 +401,9 @@ private fun getLogLevelIcon(level: LogLevel): ImageVector =
 /**
  * Formats timestamp for display
  */
-private fun formatTimestamp(timestamp: Long): String =
+private fun formatTimestamp(timestamp: Instant): String =
     try {
-        val instant = Instant.fromEpochMilliseconds(timestamp)
-        val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        val localDateTime = timestamp.toLocalDateTime(TimeZone.currentSystemDefault())
         "${localDateTime.hour.toString().padStart(2, '0')}:" +
             "${localDateTime.minute.toString().padStart(2, '0')}:" +
             "${localDateTime.second.toString().padStart(2, '0')}"

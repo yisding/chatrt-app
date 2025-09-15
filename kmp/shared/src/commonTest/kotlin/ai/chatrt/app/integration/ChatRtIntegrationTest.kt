@@ -1,5 +1,6 @@
 package ai.chatrt.app.integration
 
+import ai.chatrt.app.logging.LogLevel
 import ai.chatrt.app.models.*
 import ai.chatrt.app.network.ChatRtApiService
 import ai.chatrt.app.repository.ChatRepositoryImpl

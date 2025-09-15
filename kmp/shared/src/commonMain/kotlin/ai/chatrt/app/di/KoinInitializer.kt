@@ -9,12 +9,22 @@ import org.koin.dsl.KoinAppDeclaration
  */
 fun initKoin(
     platformModules: List<Module> = emptyList(),
-    appDeclaration: KoinAppDeclaration = {}
+    appDeclaration: KoinAppDeclaration = {},
 ) {
     startKoin {
         appDeclaration()
         modules(
-            commonModule + platformModules
+            commonModule + platformModules,
         )
+    }
+}
+
+/**
+ * Backwards-compatible initializer used by tests expecting a shared-only module.
+ */
+fun initKoinShared(appDeclaration: KoinAppDeclaration = {}) {
+    startKoin {
+        appDeclaration()
+        modules(sharedModule)
     }
 }

@@ -5,9 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-/**
- * Simplified Android screen capture manager stub for build stability.
- */
+/** Simplified Android screen capture manager stub for build stability. */
 class AndroidScreenCaptureManager(
     private val context: Context,
 ) : ScreenCaptureManager {
@@ -15,7 +13,9 @@ class AndroidScreenCaptureManager(
     private var currentResolution = Resolution(1280, 720)
     private var currentFrameRate = 30
 
-    override suspend fun initialize() { /* no-op */ }
+    override suspend fun initialize() {
+        // no-op
+    }
 
     override suspend fun startScreenCapture(permissionData: Any?): VideoStream? {
         _state.value = ScreenCaptureState.ACTIVE
@@ -50,11 +50,17 @@ class AndroidScreenCaptureManager(
 
     override suspend fun getAvailableScreens(): List<ScreenInfo> = listOf(ScreenInfo("main", "Main Display", currentResolution, true))
 
-    override suspend fun setScreenCaptureQuality(quality: ScreenCaptureQuality) { /* no-op */ }
+    override suspend fun setScreenCaptureQuality(quality: ScreenCaptureQuality) {
+        // no-op
+    }
 
-    override suspend fun showScreenCaptureNotification() { /* no-op */ }
+    override suspend fun showScreenCaptureNotification() {
+        // no-op
+    }
 
-    override suspend fun hideScreenCaptureNotification() { /* no-op */ }
+    override suspend fun hideScreenCaptureNotification() {
+        // no-op
+    }
 
     override fun observeScreenCaptureState(): Flow<ScreenCaptureState> = _state.asStateFlow()
 
@@ -66,4 +72,6 @@ class AndroidScreenCaptureManager(
 }
 
 actual fun createScreenCaptureManager(): ScreenCaptureManager =
-    throw IllegalStateException("Android ScreenCaptureManager requires Context. Use AndroidScreenCaptureManager(context) directly.")
+    throw IllegalStateException(
+        "Android ScreenCaptureManager requires Context. Use AndroidScreenCaptureManager(context) directly.",
+    )

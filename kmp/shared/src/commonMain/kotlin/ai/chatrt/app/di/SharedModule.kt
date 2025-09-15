@@ -1,5 +1,9 @@
 package ai.chatrt.app.di
 
+import ai.chatrt.app.logging.ChatRtLogger
+import ai.chatrt.app.logging.DebugInfoCollector
+import ai.chatrt.app.logging.Logger
+import ai.chatrt.app.logging.WebRtcEventLogger
 import ai.chatrt.app.network.ChatRtApiService
 import ai.chatrt.app.repository.ChatRepository
 import ai.chatrt.app.repository.ChatRepositoryImpl
@@ -19,6 +23,11 @@ import org.koin.dsl.module
  */
 val sharedModule =
     module {
+
+        // Logging System
+        single<Logger> { ChatRtLogger() }
+        single<WebRtcEventLogger> { WebRtcEventLogger(get()) }
+        single<DebugInfoCollector> { DebugInfoCollector(get(), get()) }
 
         // HTTP Client configuration
         single<HttpClient> {
@@ -59,6 +68,9 @@ val sharedModule =
         factory<MainViewModel> {
             MainViewModel(
                 chatRepository = get(),
+                logger = get(),
+                webRtcEventLogger = get(),
+                debugInfoCollector = get(),
             )
         }
 

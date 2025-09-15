@@ -1,13 +1,19 @@
 package ai.chatrt.app.ui.theme
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 /**
  * Material 3 Expressive Theme for ChatRT
  * Provides a modern, personalized user interface with enhanced motion and visual design
+ * Requirements: 6.2 (Material 3 Expressive UI)
  */
 @Composable
 fun ChatRtTheme(
@@ -21,12 +27,20 @@ fun ChatRtTheme(
             chatRtLightColorScheme()
         }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = ChatRtTypography,
-        shapes = ChatRtShapes,
-        content = content,
-    )
+    val motionScheme = ChatRtMotionScheme()
+    val expressiveShapes = ChatRtExpressiveShapes()
+
+    CompositionLocalProvider(
+        LocalChatRtMotionScheme provides motionScheme,
+        LocalChatRtExpressiveShapes provides expressiveShapes,
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = ChatRtExpressiveTypography,
+            shapes = ChatRtShapes,
+            content = content,
+        )
+    }
 }
 
 /**
@@ -97,4 +111,248 @@ private fun chatRtDarkColorScheme() =
         inverseSurface = Color(0xFFE6E1E5),
         inverseOnSurface = Color(0xFF313033),
         inversePrimary = Color(0xFF1976D2),
+    )
+
+/**
+ * Material 3 Expressive Motion Scheme
+ * Provides enhanced animation and motion design system
+ */
+data class ChatRtMotionScheme(
+    // Connection state animations
+    val connectionPulse: AnimationSpec<Float> =
+        infiniteRepeatable(
+            animation = tween(1200, easing = EaseInOutCubic),
+            repeatMode = RepeatMode.Reverse,
+        ),
+    // Button press animations
+    val buttonPress: AnimationSpec<Float> =
+        spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow,
+        ),
+    // Video mode transitions
+    val videoModeTransition: AnimationSpec<Float> =
+        tween(
+            durationMillis = 400,
+            easing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f),
+        ),
+    // Camera switch animation
+    val cameraSwitchFlip: AnimationSpec<Float> =
+        tween(
+            durationMillis = 600,
+            easing = CubicBezierEasing(0.25f, 0.46f, 0.45f, 0.94f),
+        ),
+    // Error display animations
+    val errorSlideIn: AnimationSpec<Float> =
+        spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessMedium,
+        ),
+    // Log entry animations
+    val logEntryFadeIn: AnimationSpec<Float> =
+        tween(
+            durationMillis = 300,
+            easing = EaseOutCubic,
+        ),
+    // Settings navigation
+    val settingsSlide: AnimationSpec<Float> =
+        tween(
+            durationMillis = 350,
+            easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f),
+        ),
+    // Micro-interactions
+    val hoverScale: AnimationSpec<Float> =
+        spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessHigh,
+        ),
+    val rippleExpansion: AnimationSpec<Float> =
+        tween(
+            durationMillis = 200,
+            easing = EaseOutQuart,
+        ),
+)
+
+/**
+ * Material 3 Expressive Shapes
+ * Enhanced shape system for more expressive UI components
+ */
+data class ChatRtExpressiveShapes(
+    // Connection status shapes
+    val connectionIndicator: androidx.compose.foundation.shape.RoundedCornerShape =
+        androidx.compose.foundation.shape
+            .RoundedCornerShape(50),
+    // Video preview shapes
+    val videoPreviewLarge: androidx.compose.foundation.shape.RoundedCornerShape =
+        androidx.compose.foundation.shape
+            .RoundedCornerShape(24.dp),
+    val videoPreviewSmall: androidx.compose.foundation.shape.RoundedCornerShape =
+        androidx.compose.foundation.shape
+            .RoundedCornerShape(16.dp),
+    // Button shapes with expressive corners
+    val primaryButton: androidx.compose.foundation.shape.RoundedCornerShape =
+        androidx.compose.foundation.shape
+            .RoundedCornerShape(20.dp),
+    val secondaryButton: androidx.compose.foundation.shape.RoundedCornerShape =
+        androidx.compose.foundation.shape
+            .RoundedCornerShape(16.dp),
+    // Card shapes for logs and errors
+    val logCard: androidx.compose.foundation.shape.RoundedCornerShape =
+        androidx.compose.foundation.shape
+            .RoundedCornerShape(12.dp),
+    val errorCard: androidx.compose.foundation.shape.RoundedCornerShape =
+        androidx.compose.foundation.shape
+            .RoundedCornerShape(16.dp),
+    // Settings shapes
+    val settingsCard: androidx.compose.foundation.shape.RoundedCornerShape =
+        androidx.compose.foundation.shape
+            .RoundedCornerShape(20.dp),
+    // Floating action button shape
+    val fab: androidx.compose.foundation.shape.RoundedCornerShape =
+        androidx.compose.foundation.shape
+            .RoundedCornerShape(28.dp),
+)
+
+// Composition locals for accessing theme extensions
+val LocalChatRtMotionScheme = staticCompositionLocalOf { ChatRtMotionScheme() }
+val LocalChatRtExpressiveShapes = staticCompositionLocalOf { ChatRtExpressiveShapes() }
+
+// Extension properties for easy access
+val MaterialTheme.chatRtMotion: ChatRtMotionScheme
+    @Composable get() = LocalChatRtMotionScheme.current
+
+val MaterialTheme.chatRtShapes: ChatRtExpressiveShapes
+    @Composable get() = LocalChatRtExpressiveShapes.current
+
+/**
+ * Enhanced Material 3 Expressive Typography
+ * Fine-tuned typography scales for optimal user experience
+ */
+val ChatRtExpressiveTypography =
+    Typography(
+        // Display styles for main headings
+        displayLarge =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Normal,
+                fontSize = 57.sp,
+                lineHeight = 64.sp,
+                letterSpacing = (-0.25).sp,
+            ),
+        displayMedium =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Normal,
+                fontSize = 45.sp,
+                lineHeight = 52.sp,
+                letterSpacing = 0.sp,
+            ),
+        displaySmall =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Normal,
+                fontSize = 36.sp,
+                lineHeight = 44.sp,
+                letterSpacing = 0.sp,
+            ),
+        // Headline styles for section headers
+        headlineLarge =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                fontSize = 32.sp,
+                lineHeight = 40.sp,
+                letterSpacing = 0.sp,
+            ),
+        headlineMedium =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                fontSize = 28.sp,
+                lineHeight = 36.sp,
+                letterSpacing = 0.sp,
+            ),
+        headlineSmall =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                fontSize = 24.sp,
+                lineHeight = 32.sp,
+                letterSpacing = 0.sp,
+            ),
+        // Title styles for component headers
+        titleLarge =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                fontSize = 22.sp,
+                lineHeight = 28.sp,
+                letterSpacing = 0.sp,
+            ),
+        titleMedium =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                letterSpacing = 0.15.sp,
+            ),
+        titleSmall =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                letterSpacing = 0.1.sp,
+            ),
+        // Body styles for main content
+        bodyLarge =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Normal,
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                letterSpacing = 0.15.sp,
+            ),
+        bodyMedium =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Normal,
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                letterSpacing = 0.25.sp,
+            ),
+        bodySmall =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Normal,
+                fontSize = 12.sp,
+                lineHeight = 16.sp,
+                letterSpacing = 0.4.sp,
+            ),
+        // Label styles for buttons and form elements
+        labelLarge =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                letterSpacing = 0.1.sp,
+            ),
+        labelMedium =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                fontSize = 12.sp,
+                lineHeight = 16.sp,
+                letterSpacing = 0.5.sp,
+            ),
+        labelSmall =
+            androidx.compose.ui.text.TextStyle(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                fontSize = 11.sp,
+                lineHeight = 16.sp,
+                letterSpacing = 0.5.sp,
+            ),
     )
